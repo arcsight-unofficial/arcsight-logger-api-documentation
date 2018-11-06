@@ -50,6 +50,8 @@ Make sure to replace <code>authToken</code> with the authToken returned in the l
 # LoginService
 
 ## login
+> Example Request
+
 ```shell
 curl -X POST \
   https://HOSTNAME:9000/core-service/rest/LoginService/login \
@@ -307,16 +309,18 @@ curl -X POST \
 require 'uri'
 require 'net/http'
 
-url = URI("https://HOSTNAME:9000/server/search/chart_data")
+url = URI.parse('https://HOSTNAME:9000/server/search/chart_data')
+
+json_headers = {'Content-Type' => 'application/json',
+                'Accept' => 'application/json'}
+
+data = {'search_session_id' => 100003,
+        'user_session_id' => '7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.',
+        'length' => 100, 'offset' => 0}
 
 http = Net::HTTP.new(url.host, url.port)
 
-request = Net::HTTP::Post.new(url)
-request["Accept"] = 'application/json'
-request["Content-Type"] = 'application/json'
-request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}"
-
-response = http.request(request)
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 ```
 
@@ -382,7 +386,8 @@ $client = new Client([
         'user_session_id' => 'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.',
         'length' => 100,
         'offset' => 0
-    ]);
+    ]
+]);
 
 $response = $client->request('POST');
  
@@ -424,16 +429,16 @@ curl -X POST \
 require 'uri'
 require 'net/http'
 
-url = URI("https://HOSTNAME:9000/server/search/close")
+url = URI.parse('https://HOSTNAME:9000/server/search/close')
+
+json_headers = {'Content-Type' => 'application/json',
+                'Accept' => 'application/json'}
+
+data = {'search_session_id' => 100003, 'user_session_id' => 'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'}
 
 http = Net::HTTP.new(url.host, url.port)
 
-request = Net::HTTP::Post.new(url)
-request["Accept"] = 'application/json'
-request["Content-Type"] = 'application/json'
-request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
-
-response = http.request(request)
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 ```
 
@@ -542,16 +547,21 @@ curl -X POST \
 require 'uri'
 require 'net/http'
 
-url = URI("https://HOSTNAME:9000/server/search/drilldown")
+url = URI.parse('https://HOSTNAME:9000/server/search/close')
+
+json_headers = {'Content-Type' => 'application/json',
+                'Accept' => 'application/json'}
+
+data = {'search_session_id' => 100003, 
+        'user_session_id' => 'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.',
+        'start_time' => 'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'
+        'end_time' => 'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'
+
+          }
 
 http = Net::HTTP.new(url.host, url.port)
 
-request = Net::HTTP::Post.new(url)
-request["Accept"] = 'application/json'
-request["Content-Type"] = 'application/json'
-request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}"
-
-response = http.request(request)
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 ```
 

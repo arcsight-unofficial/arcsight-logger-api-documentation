@@ -12,8 +12,11 @@
     <style>
     </style>
     <link rel="stylesheet" media="screen" href="pub/css/screen.css">
+    <link rel="stylesheet" media="screen" href="pub/css/screen_overrides.css">
     <link rel="stylesheet" media="print" href="pub/css/print.css">
+    <link rel="stylesheet" media="print" href="pub/css/print_overrides.css">
     <link rel="stylesheet" media="screen" href="pub/css/monokai-sublime.css">
+    <link rel="stylesheet" media="screen" href="pub/css/theme_overrides.css">
     
       <script src="source/javascripts/lib/_jquery.js"></script>
 <script src="source/javascripts/lib/_jquery.highlight.js"></script>
@@ -205,6 +208,9 @@ Make sure to replace <code>authToken</code> with the authToken returned in the l
 </aside>
 <h1 id="loginservice">LoginService</h1>
 <h2 id="login">login</h2>
+<blockquote>
+<p>Example Request</p>
+</blockquote>
 <pre class="highlight tab tab-shell"><code>curl -X POST \
   https://HOSTNAME:9000/core-service/rest/LoginService/login \
   -H <span class="hljs-string">'Accept: application/json'</span> \
@@ -467,16 +473,18 @@ $request-&gt;setPostFields(<span class="hljs-keyword">array</span>(
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/chart_data"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/chart_data'</span>)
+
+json_headers = {<span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+                <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>}
+
+data = {<span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+        <span class="hljs-string">'length'</span> =&gt; <span class="hljs-number">100</span>, <span class="hljs-string">'offset'</span> =&gt; <span class="hljs-number">0</span>}
 
 http = Net::HTTP.new(url.host, url.port)
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}"</span>
-
-response = http.request(request)
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
@@ -526,17 +534,18 @@ print(response.text)
 <pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
 $client = <span class="hljs-keyword">new</span> Client([
-    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/chart_data'</span>,
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/chart_data'</span>
     <span class="hljs-string">'headers'</span>   =&gt; [
         <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
     ],
     <span class="hljs-string">'json'</span> =&gt; [
         <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
-        <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
-        <span class="hljs-string">'length'</span>: <span class="hljs-number">100</span>,
-        <span class="hljs-string">'offset'</span>: <span class="hljs-number">0</span>
-    ]);
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+        <span class="hljs-string">'length'</span> =&gt; <span class="hljs-number">100</span>,
+        <span class="hljs-string">'offset'</span> =&gt; <span class="hljs-number">0</span>
+    ]
+]);
 
 $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
  
@@ -604,16 +613,16 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/close"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>)
+
+json_headers = {<span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+                <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>}
+
+data = {<span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>, <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>}
 
 http = Net::HTTP.new(url.host, url.port)
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
-
-response = http.request(request)
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
@@ -731,16 +740,21 @@ $request-&gt;setBody(<span class="hljs-string">'{
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/drilldown"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>)
+
+json_headers = {<span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+                <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>}
+
+data = {<span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>, 
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+        <span class="hljs-string">'start_time'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
+        <span class="hljs-string">'end_time'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
+
+          }
 
 http = Net::HTTP.new(url.host, url.port)
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}"</span>
-
-response = http.request(request)
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
