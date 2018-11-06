@@ -1,6 +1,6 @@
 /* place your custom CSS overrides here */
 
-div .highlight {
+#div .highlight {
 	max-width: 95%;
 	max-height: 350px;
 	overflow-y: auto;
@@ -40,4 +40,31 @@ div .highlight {
 }
 .well {
     background: rgba(0, 0, 0, 0.01);
+}
+
+.content blockquote > p {
+  background-color: #1C1C19;
+  border-radius: 5px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #404040;
+  padding: 13px 2em;
+  color: #ccc; 
+}
+
+.lang-selector {
+    border-radius: 3px;
+}
+
+.lang-selector a.active {
+    background-color: #f6574d;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.page-wrapper .lang-selector {
+    padding: 1em 28px;
+}
+
+.content table th, tr, td, tbody {
+    border: 1px solid black;
 }

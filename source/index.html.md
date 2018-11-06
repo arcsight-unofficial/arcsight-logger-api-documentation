@@ -1,3918 +1,1841 @@
 ---
 title: Swagger Petstore v1.0.0
 language_tabs:
-  - shell: Shell
-  - http: HTTP
-  - javascript: JavaScript
-  - javascript--nodejs: Node.JS
+  - shell: Curl
   - ruby: Ruby
   - python: Python
-  - java: Java
   - go: Go
+  - php: PHP
 toc_footers:
   - >-
-    <a href="https://mermade.github.io/shins/asyncapi.html">See AsyncAPI
-    example</a>
+    <a href="https://github.com/Mermade/shins">Powered by Shin</a>
 includes: []
 search: true
-highlight_theme: darkula
+highlight_theme: monokai-sublime
 headingLevel: 2
 
 ---
 
-<h1 id="Swagger-Petstore">Swagger Petstore v1.0.0</h1>
 
-> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+# Introduction
 
-:dog: :cat: :rabbit: This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.
 
-Base URLs:
+Welcome to the unofficial API documentation for the Microfocus ArcSight Logger. This document describes all API endpoints available to users of the ArcSight Logger product.
 
-* <a href="http://petstore.swagger.io/v2">http://petstore.swagger.io/v2</a>
+The API itself supports only actions related to generating searches and retrieving it's results, and will only cover the endpoints available to the RESTful API.
 
-<a href="http://swagger.io/terms/">Terms of service</a>
-Email: <a href="mailto:apiteam@swagger.io">Support</a> 
-License: <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0</a>
+# Mandatory legal part
+All mentions of Microfocus, ArcSight and Logger is trademarked to Microfocus, this documentation is a collected source of educational material, any usage of products mentioned in this documentation requires a commercial license with MicroFocus or any of it's partners.
+
+The documentation or associated open source software is not in any way part of the official documentation provided by Micro Focus and therefore not included in any support contract. It does not represent or try to imitate any products or services offered by Microfocus.
+
+The documentation is provided "as-is" and can be changed or updated at any time, keeping it up to date for all versions is done by "best-effort".
+
+While i do my best to keep this as updated as possible, there might be cases in which i am unable to do so, but anyone is allowed to fork, change or contribute to this project in any way they see fit.
+
+Any other legal parts is covered in the LICENSE file and it's associated links.
 
 # Authentication
 
-- oAuth2 authentication. 
+To communicate with the API you need to include a so called API Token, this token is given to you after posting your username and password to the [login](#login) API endpoint. All further references to authToken during this documentation is related to that.
 
-    - Flow: implicit
-    - Authorization URL = [http://petstore.swagger.io/oauth/dialog](http://petstore.swagger.io/oauth/dialog)
+Please remember that all searches are related to your API token, this means that if your session times out due to inactivity, your search is lost, as logging in again will give you a new token.
 
-|Scope|Scope Description|
-|---|---|
-|write:pets|modify pets in your account|
-|read:pets|read your pets|
+After finalizing your actions, please remember to always [logout](#logout)
 
-* API Key (api_key)
-    - Parameter Name: **api_key**, in: header. 
-
-<h1 id="Swagger-Petstore-pet">pet</h1>
-
-Everything about your Pets
-
-<a href="http://swagger.io">Find out more</a>
-
-## addPet
-
-<a id="opIdaddPet"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/pet \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/pet HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/pet',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/pet', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/pet", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pet`
-
-*Add a new pet to the store*
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}
-```
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Pet>
-  <id>0</id>
-  <category>
-    <id>0</id>
-    <name>string</name>
-  </category>
-  <name>doggie</name>
-  <photoUrls>string</photoUrls>
-  <tags>
-    <id>0</id>
-    <name>string</name>
-  </tags>
-  <status>available</status>
-</Pet>
-```
-
-<h3 id="addPet-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[Pet](#schemapet)|true|Pet object that needs to be added to the store|
-
-<h3 id="addPet-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|Invalid input|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
+<aside class="notice">
+Make sure to replace <code>authToken</code> with the authToken returned in the login response for all other API calls.
 </aside>
 
-## updatePet
+# LoginService
 
-<a id="opIdupdatePet"></a>
-
-> Code samples
-
+## login
 ```shell
-# You can also use wget
-curl -X PUT http://petstore.swagger.io/v2/pet \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-PUT http://petstore.swagger.io/v2/pet HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet',
-  method: 'put',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet',
-{
-  method: 'PUT',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.put 'http://petstore.swagger.io/v2/pet',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.put('http://petstore.swagger.io/v2/pet', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("PUT");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("PUT", "http://petstore.swagger.io/v2/pet", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`PUT /pet`
-
-*Update an existing pet*
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}
-```
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Pet>
-  <id>0</id>
-  <category>
-    <id>0</id>
-    <name>string</name>
-  </category>
-  <name>doggie</name>
-  <photoUrls>string</photoUrls>
-  <tags>
-    <id>0</id>
-    <name>string</name>
-  </tags>
-  <status>available</status>
-</Pet>
-```
-
-<h3 id="updatePet-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[Pet](#schemapet)|true|Pet object that needs to be added to the store|
-
-<h3 id="updatePet-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Pet not found|None|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|Validation exception|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## findPetsByStatus
-
-<a id="opIdfindPetsByStatus"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/pet/findByStatus?status=available \
-  -H 'Accept: application/xml' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/pet/findByStatus?status=available HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/findByStatus',
-  method: 'get',
-  data: '?status=available',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/findByStatus?status=available',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/pet/findByStatus',
-  params: {
-  'status' => 'array[string]'
-}, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/pet/findByStatus', params={
-  'status': [
-  "available"
-]
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/findByStatus?status=available");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/pet/findByStatus", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /pet/findByStatus`
-
-*Finds Pets by status*
-
-Multiple status values can be provided with comma separated strings
-
-<h3 id="findPetsByStatus-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|status|query|array[string]|true|Status values that need to be considered for filter|
-
-#### Enumerated Values
-
-|Parameter|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<id>0</id>
-<category>
-  <id>0</id>
-  <name>string</name>
-</category>
-<name>doggie</name>
-<photoUrls>string</photoUrls>
-<tags>
-  <id>0</id>
-  <name>string</name>
-</tags>
-<status>available</status>
-```
-
-```json
-[
-  {
-    "id": 0,
-    "category": {
-      "id": 0,
-      "name": "string"
-    },
-    "name": "doggie",
-    "photoUrls": [
-      "string"
-    ],
-    "tags": [
-      {
-        "id": 0,
-        "name": "string"
-      }
-    ],
-    "status": "available"
-  }
-]
-```
-
-<h3 id="findPetsByStatus-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid status value|None|
-
-<h3 id="findPetsByStatus-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|*anonymous*|[[Pet](#schemapet)]|false|No description|
-|» id|integer(int64)|false|No description|
-|» category|[Category](#schemacategory)|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» name|string|true|No description|
-|» photoUrls|[string]|true|No description|
-|» tags|[[Tag](#schematag)]|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» status|string|false|pet status in the store|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## findPetsByTags
-
-<a id="opIdfindPetsByTags"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/pet/findByTags?tags=string \
-  -H 'Accept: application/xml' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/pet/findByTags?tags=string HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/findByTags',
-  method: 'get',
-  data: '?tags=string',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/findByTags?tags=string',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/pet/findByTags',
-  params: {
-  'tags' => 'array[string]'
-}, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/pet/findByTags', params={
-  'tags': [
-  "string"
-]
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/findByTags?tags=string");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/pet/findByTags", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /pet/findByTags`
-
-*Finds Pets by tags*
-
-Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-
-<h3 id="findPetsByTags-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|tags|query|array[string]|true|Tags to filter by|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<id>0</id>
-<category>
-  <id>0</id>
-  <name>string</name>
-</category>
-<name>doggie</name>
-<photoUrls>string</photoUrls>
-<tags>
-  <id>0</id>
-  <name>string</name>
-</tags>
-<status>available</status>
-```
-
-```json
-[
-  {
-    "id": 0,
-    "category": {
-      "id": 0,
-      "name": "string"
-    },
-    "name": "doggie",
-    "photoUrls": [
-      "string"
-    ],
-    "tags": [
-      {
-        "id": 0,
-        "name": "string"
-      }
-    ],
-    "status": "available"
-  }
-]
-```
-
-<h3 id="findPetsByTags-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid tag value|None|
-
-<h3 id="findPetsByTags-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|*anonymous*|[[Pet](#schemapet)]|false|No description|
-|» id|integer(int64)|false|No description|
-|» category|[Category](#schemacategory)|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» name|string|true|No description|
-|» photoUrls|[string]|true|No description|
-|» tags|[[Tag](#schematag)]|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» status|string|false|pet status in the store|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## getPetById
-
-<a id="opIdgetPetById"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/pet/{petId} \
-  -H 'Accept: application/xml' \
-  -H 'api_key: API_KEY'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/pet/{petId} HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml',
-  'api_key':'API_KEY'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml',
-  'api_key':'API_KEY'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml',
-  'api_key' => 'API_KEY'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/pet/{petId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml',
-  'api_key': 'API_KEY'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/pet/{petId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        "api_key": []string{"API_KEY"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/pet/{petId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /pet/{petId}`
-
-*Find pet by ID*
-
-Returns a single pet
-
-<h3 id="getPetById-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|petId|path|integer(int64)|true|ID of pet to return|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Pet>
-  <id>0</id>
-  <category>
-    <id>0</id>
-    <name>string</name>
-  </category>
-  <name>doggie</name>
-  <photoUrls>string</photoUrls>
-  <tags>
-    <id>0</id>
-    <name>string</name>
-  </tags>
-  <status>available</status>
-</Pet>
-```
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}
-```
-
-<h3 id="getPetById-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[Pet](#schemapet)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Pet not found|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-api_key
-</aside>
-
-## updatePetWithForm
-
-<a id="opIdupdatePetWithForm"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/pet/{petId} \
+curl -X POST \
+  https://HOSTNAME:9000/core-service/rest/LoginService/login \
+  -H 'Accept: application/json' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/pet/{petId} HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/x-www-form-urlencoded
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/x-www-form-urlencoded',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "name": "string",
-  "status": "string"
-}';
-const headers = {
-  'Content-Type':'application/x-www-form-urlencoded',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
+  -d 'login=USERNAME&password=PASSWORD'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
+url = URI("https://HOSTNAME:9000/core-service/rest/LoginService/login")
+
+http = Net::HTTP.new(url.host, url.port)
+
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/x-www-form-urlencoded'
+request.body = "login=USERNAME&password=PASSWORD"
+
+response = http.request(request)
+puts response.read_body
+```
+
+```python
+import requests
+
+url = "https://HOSTNAME:9000/core-service/rest/LoginService/login"
+
+payload = "login=USERNAME&password=PASSWORD"
 headers = {
+    'Accept': "application/json",
+    'Content-Type': "application/x-www-form-urlencoded",
+}
+
+response = requests.request("POST", url, data=payload, headers=headers)
+
+print(response.text)
+```
+
+```go
+package main
+
+import (
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
+)
+
+func main() {
+
+  url := "https://HOSTNAME:9000/core-service/rest/LoginService/login"
+
+  payload := strings.NewReader("login=USERNAME&password=PASSWORD")
+
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
+}
+```
+
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/core-service/rest/LoginService/login');
+$request->setMethod(HTTP_METH_POST);
+
+$request->setHeaders(array(
   'Content-Type' => 'application/x-www-form-urlencoded',
-  'Authorization' => 'Bearer {access-token}'
+  'Accept' => 'application/json'
+));
+
+$request->setContentType('application/x-www-form-urlencoded');
+$request->setPostFields(array(
+  'login' => 'USERNAME',
+  'password' => 'PASSWORD'
+));
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
 }
-
-result = RestClient.post 'http://petstore.swagger.io/v2/pet/{petId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
 ```
 
-```python
-import requests
-headers = {
-  'Content-Type': 'application/x-www-form-urlencoded',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/pet/{petId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/x-www-form-urlencoded"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/pet/{petId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pet/{petId}`
-
-*Updates a pet in the store with form data*
-
-> Body parameter
-
-```yaml
-name: string
-status: string
-
-```
-
-<h3 id="updatePetWithForm-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|petId|path|integer(int64)|true|ID of pet that needs to be updated|
-|body|body|object|false|No description|
-|» name|body|string|false|Updated name of the pet|
-|» status|body|string|false|Updated status of the pet|
-
-<h3 id="updatePetWithForm-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|Invalid input|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## deletePet
-
-<a id="opIddeletePet"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X DELETE http://petstore.swagger.io/v2/pet/{petId} \
-  -H 'api_key: string' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-DELETE http://petstore.swagger.io/v2/pet/{petId} HTTP/1.1
-Host: petstore.swagger.io
-
-api_key: string
-
-```
-
-```javascript
-var headers = {
-  'api_key':'string',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}',
-  method: 'delete',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'api_key':'string',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}',
-{
-  method: 'DELETE',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'api_key' => 'string',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.delete 'http://petstore.swagger.io/v2/pet/{petId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'api_key': 'string',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.delete('http://petstore.swagger.io/v2/pet/{petId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "api_key": []string{"string"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("DELETE", "http://petstore.swagger.io/v2/pet/{petId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`DELETE /pet/{petId}`
-
-*Deletes a pet*
-
-<h3 id="deletePet-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|api_key|header|string|false|No description|
-|petId|path|integer(int64)|true|Pet id to delete|
-
-<h3 id="deletePet-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Pet not found|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## uploadFile
-
-<a id="opIduploadFile"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/pet/{petId}/uploadImage \
-  -H 'Content-Type: multipart/form-data' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/pet/{petId}/uploadImage HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: multipart/form-data
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'multipart/form-data',
-  'Accept':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}/uploadImage',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "additionalMetadata": "string",
-  "file": "string"
-}';
-const headers = {
-  'Content-Type':'multipart/form-data',
-  'Accept':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}/uploadImage',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'multipart/form-data',
-  'Accept' => 'application/json',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/pet/{petId}/uploadImage',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'multipart/form-data',
-  'Accept': 'application/json',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/pet/{petId}/uploadImage', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}/uploadImage");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"multipart/form-data"},
-        "Accept": []string{"application/json"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/pet/{petId}/uploadImage", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pet/{petId}/uploadImage`
-
-*uploads an image*
-
-> Body parameter
-
-```yaml
-additionalMetadata: string
-file: string
-
-```
-
-<h3 id="uploadFile-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|petId|path|integer(int64)|true|ID of pet to update|
-|body|body|object|false|No description|
-|» additionalMetadata|body|string|false|Additional data to pass to server|
-|» file|body|string(binary)|false|file to upload|
-
-> Example responses
+> The above request returns HTTP 200 OK and a JSON response structured like this:
 
 ```json
-{
-  "code": 0,
-  "type": "string",
-  "message": "string"
-}
-```
-
-<h3 id="uploadFile-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[ApiResponse](#schemaapiresponse)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-<h1 id="Swagger-Petstore-store">store</h1>
-
-Access to Petstore orders
-
-## getInventory
-
-<a id="opIdgetInventory"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/store/inventory \
-  -H 'Accept: application/json' \
-  -H 'api_key: API_KEY'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/store/inventory HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/json',
-  'api_key':'API_KEY'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/inventory',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
+[
+  {
+      "log.loginResponse": {
+          "log.return": "7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."
+      }
   }
-})
-
+]
 ```
 
-```javascript--nodejs
-const request = require('node-fetch');
+Returns a token used in all other API endpoints. This API call also supports GET with query parameters, but this is not recommended, as any sensitive data would be stored on the webservers and proxies utilizing this.
 
-const headers = {
-  'Accept':'application/json',
-  'api_key':'API_KEY'
+### HTTP Request
 
-};
+`POST https://HOSTNAME:9000/core-service/rest/LoginService/login`
 
-fetch('http://petstore.swagger.io/v2/store/inventory',
-{
-  method: 'GET',
+### Query Parameters
 
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+login | String | null | Username with enough permissions to access the API | Yes
+password | String | null | Password to related user account | Yes
 
+## logout
+```shell
+curl -X POST \
+  https://HOSTNAME:9000/core-service/rest/LoginService/logout \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d authToken=7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
-headers = {
-  'Accept' => 'application/json',
-  'api_key' => 'API_KEY'
-}
+url = URI("https://HOSTNAME:9000/core-service/rest/LoginService/logout")
 
-result = RestClient.get 'http://petstore.swagger.io/v2/store/inventory',
-  params: {
-  }, headers: headers
+http = Net::HTTP.new(url.host, url.port)
 
-p JSON.parse(result)
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/x-www-form-urlencoded'
+request.body = "authToken=7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."
 
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
 import requests
+
+url = "https://HOSTNAME:9000/core-service/rest/LoginService/logout"
+
+payload = "authToken=7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."
 headers = {
-  'Accept': 'application/json',
-  'api_key': 'API_KEY'
+    'Accept': "application/json",
+    'Content-Type': "application/x-www-form-urlencoded",
 }
 
-r = requests.get('http://petstore.swagger.io/v2/store/inventory', params={
+response = requests.request("POST", url, data=payload, headers=headers)
 
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/inventory");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+print(response.text)
 ```
 
 ```go
 package main
 
 import (
-       "bytes"
-       "net/http"
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
 )
 
 func main() {
 
-    headers := map[string][]string{
-        "Accept": []string{"application/json"},
-        "api_key": []string{"API_KEY"},
-        
-    }
+  url := "https://HOSTNAME:9000/core-service/rest/LoginService/logout"
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/store/inventory", data)
-    req.Header = headers
+  payload := strings.NewReader("authToken=7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
+  req, _ := http.NewRequest("POST", url, payload)
 
-```
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-`GET /store/inventory`
+  res, _ := http.DefaultClient.Do(req)
 
-*Returns pet inventories by status*
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
 
-Returns a map of status codes to quantities
+  fmt.Println(res)
+  fmt.Println(string(body))
 
-> Example responses
-
-```json
-{
-  "property1": 0,
-  "property2": 0
 }
 ```
 
-<h3 id="getInventory-responses">Responses</h3>
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/core-service/rest/LoginService/logout');
+$request->setMethod(HTTP_METH_POST);
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|Inline|
+$request->setHeaders(array(
+  'Content-Type' => 'application/x-www-form-urlencoded',
+  'Accept' => 'application/json'
+));
 
-<h3 id="getInventory-responseschema">Response Schema</h3>
+$request->setContentType('application/x-www-form-urlencoded');
+$request->setPostFields(array(
+  'authToken' => '7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'
+));
 
-Status Code **200**
+try {
+  $response = $request->send();
 
-|Name|Type|Required|Description|
-|---|---|---|---|
-|» **additionalProperties**|integer(int32)|false|No description|
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
 
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-api_key
-</aside>
+> The above request returns HTTP Response 204 No Content on success:
 
-## placeOrder
+Closes the session related to the authToken, with a 204 No Content responser upon success
 
-<a id="opIdplaceOrder"></a>
+### HTTP Request
 
-> Code samples
+`POST https://HOSTNAME:9000/core-service/rest/LoginService/logout`
 
+### URL Parameters
+
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+authToken | String | null | Auth Token that you want to logout | Yes
+
+<aside class="warning">Please remember that any ongoing or finished search is tied with the session, when closed it will delete all searches related to the session</aside>
+
+# SearchServices
+
+## chart_data
 ```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/store/order \
+curl -X POST \
+  https://HOSTNAME:9000/server/search/chart_data \
+  -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/store/order HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/order',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/store/order',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id": "7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.",
+    "length": 100,
+    "offset": 0
+}'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
+url = URI("https://HOSTNAME:9000/server/search/chart_data")
+
+http = Net::HTTP.new(url.host, url.port)
+
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}"
+
+response = http.request(request)
+puts response.read_body
+```
+
+```python
+import requests
+
+url = "https://HOSTNAME:9000/server/search/chart_data"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}"
 headers = {
+    'Accept': "application/json",
+    'Content-Type': "application/json",
+}
+
+response = requests.request("POST", url, data=payload, headers=headers)
+
+print(response.text)
+```
+
+```go
+package main
+
+import (
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
+)
+
+func main() {
+
+  url := "https://HOSTNAME:9000/server/search/chart_data"
+
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}")
+
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
+}
+```
+
+```php
+use GuzzleHttp\Client;
+
+$client = new Client([
+    'base_uri' => 'https://HOSTNAME:9000/server/search/chart_data'
+    'headers'   => [
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ],
+    'json' => [
+        'search_session_id'  => 10003,
+        'user_session_id' => 'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.',
+        'length' => 100,
+        'offset' => 0
+    ]);
+
+$response = $client->request('POST');
+ 
+return json_decode($response->getBody()->getContents(), true);
+```
+
+> The above request returns HTTP Response 204 No Content on success:
+
+Returns results from your search formatted to be used in charts or statistics, can also return values of search using aggregations like sort or head in their query.
+
+### HTTP Request
+
+`POST https://HOSTNAME:9000/server/search/chart_data`
+
+### URL Parameters
+
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
+length | Number | 25 | The amount of results you want to retrieve, maximum value is 100 | No
+offset | Number | 0 | Auth Token that you want to logout | No
+
+<aside class="warning">If no aggregation is used in the query during the intial search, the response will tell you that the search is not in a format that is supported for this API Endpoint</aside>
+
+## close
+```shell
+curl -X POST \
+  https://HOSTNAME:9000/server/search/close \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}'
+```
+
+```ruby
+require 'uri'
+require 'net/http'
+
+url = URI("https://HOSTNAME:9000/server/search/close")
+
+http = Net::HTTP.new(url.host, url.port)
+
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
+
+response = http.request(request)
+puts response.read_body
+```
+
+```python
+import requests
+
+url = "https://HOSTNAME:9000/server/search/close"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
+headers = {
+    'Accept': "application/json",
+    'Content-Type': "application/json",
+}
+
+response = requests.request("POST", url, data=payload, headers=headers)
+
+print(response.text)
+```
+
+```go
+package main
+
+import (
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
+)
+
+func main() {
+
+  url := "https://HOSTNAME:9000/server/search/close"
+
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}")
+
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
+}
+```
+
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/close');
+$request->setMethod(HTTP_METH_POST);
+
+$request->setHeaders(array(
   'Content-Type' => 'application/json',
-  'Accept' => 'application/xml'
-}
+  'Accept' => 'application/json'
+));
 
-result = RestClient.post 'http://petstore.swagger.io/v2/store/order',
-  params: {
-  }, headers: headers
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}');
 
-p JSON.parse(result)
+try {
+  $response = $request->send();
 
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/xml'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/store/order', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/order");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        "Accept": []string{"application/xml"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/store/order", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /store/order`
-
-*Place an order for a pet*
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
 }
 ```
 
-<h3 id="placeOrder-parameters">Parameters</h3>
+> The above request returns an empty HTTP 200 OK response upon success
 
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[Order](#schemaorder)|true|order placed for purchasing the pet|
+This API call closes a search that has finalized. Search results from an API call is stored locally until the timeout you specified in your [search](#search), if you set a higher timeout to ensure data is not removed until you have finished your actions, you might want to remove your search manually before the timeout period, this is done with this API call.
 
-> Example responses
+### HTTP Request
 
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Order>
-  <id>0</id>
-  <petId>0</petId>
-  <quantity>0</quantity>
-  <shipDate>2018-04-24T13:02:08Z</shipDate>
-  <status>placed</status>
-  <complete>false</complete>
-</Order>
-```
+`POST https://HOSTNAME:9000/server/search/close`
 
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}
-```
+### URL Parameters
 
-<h3 id="placeOrder-responses">Responses</h3>
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[Order](#schemaorder)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid Order|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## getOrderById
-
-<a id="opIdgetOrderById"></a>
-
-> Code samples
-
+## drilldown
 ```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/store/order/{orderId} \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/store/order/{orderId} HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/store/order/{orderId}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
+curl -X POST \
+  https://HOSTNAME:9000/server/search/drilldown \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "end_time":"",
+    "start_time":""
+}'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
-headers = {
-  'Accept' => 'application/xml'
-}
+url = URI("https://HOSTNAME:9000/server/search/drilldown")
 
-result = RestClient.get 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  params: {
-  }, headers: headers
+http = Net::HTTP.new(url.host, url.port)
 
-p JSON.parse(result)
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}"
 
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
 import requests
+
+url = "https://HOSTNAME:9000/server/search/drilldown"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}"
 headers = {
-  'Accept': 'application/xml'
+    'Accept': "application/json",
+    'Content-Type': "application/json",
 }
 
-r = requests.get('http://petstore.swagger.io/v2/store/order/{orderId}', params={
+response = requests.request("POST", url, data=payload, headers=headers)
 
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/order/{orderId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+print(response.text)
 ```
 
 ```go
 package main
 
 import (
-       "bytes"
-       "net/http"
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
 )
 
 func main() {
 
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        
-    }
+  url := "https://HOSTNAME:9000/server/search/drilldown"
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/store/order/{orderId}", data)
-    req.Header = headers
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
+  req, _ := http.NewRequest("POST", url, payload)
 
-```
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
 
-`GET /store/order/{orderId}`
+  res, _ := http.DefaultClient.Do(req)
 
-*Find purchase order by ID*
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
 
-For valid response try integer IDs with value >= 1 and <= 10. Other values will generated exceptions
+  fmt.Println(res)
+  fmt.Println(string(body))
 
-<h3 id="getOrderById-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|orderId|path|integer(int64)|true|ID of pet that needs to be fetched|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Order>
-  <id>0</id>
-  <petId>0</petId>
-  <quantity>0</quantity>
-  <shipDate>2018-04-24T13:02:08Z</shipDate>
-  <status>placed</status>
-  <complete>false</complete>
-</Order>
-```
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
 }
 ```
 
-<h3 id="getOrderById-responses">Responses</h3>
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/drilldown');
+$request->setMethod(HTTP_METH_POST);
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[Order](#schemaorder)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Order not found|None|
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
 
-<aside class="success">
-This operation does not require authentication
-</aside>
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "end_time":"",
+    "start_time":""
+}');
 
-## deleteOrder
+try {
+  $response = $request->send();
 
-<a id="opIddeleteOrder"></a>
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
 
-> Code samples
+> The above request returns an empty HTTP 200 OK response upon success
 
+In certain cases you might want to only retrieve data from a specific time range even though your search was performed in a much larger timeframe.
+This API call is used to change the timeframe of a currently completed search. First a [search](#search) is initiated, when the [status](#status) API call shows a successfully completed search you are able to utilize this [drilldown](#drilldown) API call to change the timeframe. If this returns an empty HTTP 200 OK response you can utilize any of the retrieval API calls to retrieve the same search, to only receive data within your newly defined `start_time` and `end_time`
+
+### HTTP Request
+
+`POST https://HOSTNAME:9000/server/search/drilldown`
+
+### URL Parameters
+
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
+end_time | timestamp | ANY | The new end time to be used for your finished search | Yes
+start_time | timestamp | ANY | The new start time to be used for your finished search | Yes
+
+## events
 ```shell
-# You can also use wget
-curl -X DELETE http://petstore.swagger.io/v2/store/order/{orderId}
-
-```
-
-```http
-DELETE http://petstore.swagger.io/v2/store/order/{orderId} HTTP/1.1
-Host: petstore.swagger.io
-
-```
-
-```javascript
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  method: 'delete',
-
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-fetch('http://petstore.swagger.io/v2/store/order/{orderId}',
-{
-  method: 'DELETE'
-
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
+curl -X POST \
+  https://HOSTNAME:9000/server/search/events \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id": "qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "dir": "forward",
+    "fields": ["Event Time", "Device", "Logger", "Raw Message", "deviceVendor", "deviceProduct", "deviceVersion", "deviceEventClassId", "name"],
+    "length": 1000,
+    "offset": 0
+}'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
-result = RestClient.delete 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  params: {
-  }
+url = URI("https://HOSTNAME:9000/server/search/events")
 
-p JSON.parse(result)
+http = Net::HTTP.new(url.host, url.port)
 
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"dir\": \"forward\",\r\n    \"fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"length\": 1000,\r\n    \"offset\": 0\r\n}"
+
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
 import requests
 
-r = requests.delete('http://petstore.swagger.io/v2/store/order/{orderId}', params={
+url = "https://HOSTNAME:9000/server/search/events"
 
-)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/order/{orderId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("DELETE", "http://petstore.swagger.io/v2/store/order/{orderId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`DELETE /store/order/{orderId}`
-
-*Delete purchase order by ID*
-
-For valid response try integer IDs with positive integer value. Negative or non-integer values will generate API errors
-
-<h3 id="deleteOrder-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|orderId|path|integer(int64)|true|ID of the order that needs to be deleted|
-
-<h3 id="deleteOrder-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Order not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-<h1 id="Swagger-Petstore-user">user</h1>
-
-Operations about user
-
-<a href="http://swagger.io">Find out more about our store</a>
-
-## createUser
-
-<a id="opIdcreateUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/user \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/user HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"dir\": \"forward\",\r\n    \"fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"length\": 1000,\r\n    \"offset\": 0\r\n}"
 headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/user',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/user', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
+    'Accept': "application/json",
+    'Content-Type': "application/json",
     }
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/user", data)
-    req.Header = headers
+response = requests.request("POST", url, data=payload, headers=headers)
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /user`
-
-*Create user*
-
-This can only be done by the logged in user.
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-<h3 id="createUser-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[User](#schemauser)|true|Created user object|
-
-<h3 id="createUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## createUsersWithArrayInput
-
-<a id="opIdcreateUsersWithArrayInput"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/user/createWithArray \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/user/createWithArray HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/createWithArray',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '[
-  {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
-  }
-]';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/createWithArray',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/user/createWithArray',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/user/createWithArray', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/createWithArray");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+print(response.text)
 ```
 
 ```go
 package main
 
 import (
-       "bytes"
-       "net/http"
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
 )
 
 func main() {
 
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
+  url := "https://HOSTNAME:9000/server/search/events"
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/user/createWithArray", data)
-    req.Header = headers
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"dir\": \"forward\",\r\n    \"fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"length\": 1000,\r\n    \"offset\": 0\r\n}")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
 }
-
 ```
 
-`POST /user/createWithArray`
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/events');
+$request->setMethod(HTTP_METH_POST);
 
-*Creates list of users with given input array*
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
 
-> Body parameter
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id": "qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "dir": "forward",
+    "fields": ["Event Time", "Device", "Logger", "Raw Message", "deviceVendor", "deviceProduct", "deviceVersion", "deviceEventClassId", "name"],
+    "length": 1000,
+    "offset": 0
+}');
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
+
+> The above request returns HTTP 200 OK and a JSON response structured like this:
 
 ```json
 [
   {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
+      "fields": [
+          {
+              "name": "_rowId",
+              "type": "string",
+              "alias": "_rowId"
+          },
+          {
+              "name": "Event Time",
+              "type": "date",
+              "alias": "Event Time"
+          },
+          {
+              "name": "Logger",
+              "type": "string",
+              "alias": "Logger"
+          },
+          {
+              "name": "Device",
+              "type": "string",
+              "alias": "Device"
+          },
+          {
+              "name": "Receipt Time",
+              "type": "date",
+              "alias": "Receipt Time"
+          },
+          {
+              "name": "deviceReceiptTime",
+              "type": "date",
+              "alias": "deviceReceiptTime"
+          },
+          {
+              "name": "deviceCustomString2",
+              "type": "string",
+              "alias": "deviceCustomString2"
+          },
+          {
+              "name": "destinationAddress",
+              "type": "string",
+              "alias": "destinationAddress"
+          },
+          {
+              "name": "deviceCustomNumber3Label",
+              "type": "string",
+              "alias": "deviceCustomNumber3Label"
+          },
+          {
+              "name": "deviceVersion",
+              "type": "string",
+              "alias": "deviceVersion"
+          },
+          {
+              "name": "name",
+              "type": "string",
+              "alias": "name"
+          },
+          {
+              "name": "deviceAddress",
+              "type": "string",
+              "alias": "deviceAddress"
+          },
+          {
+              "name": "deviceVendor",
+              "type": "string",
+              "alias": "deviceVendor"
+          },
+          {
+              "name": "Version",
+              "type": "string",
+              "alias": "Version"
+          },
+          {
+              "name": "deviceCustomNumber1Label",
+              "type": "string",
+              "alias": "deviceCustomNumber1Label"
+          },
+          {
+              "name": "deviceEventCategory",
+              "type": "string",
+              "alias": "deviceEventCategory"
+          },
+          {
+              "name": "endTime",
+              "type": "date",
+              "alias": "endTime"
+          },
+          {
+              "name": "fileName",
+              "type": "string",
+              "alias": "fileName"
+          },
+          {
+              "name": "deviceCustomNumber2",
+              "type": "number",
+              "alias": "deviceCustomNumber2"
+          },
+          {
+              "name": "deviceCustomNumber1",
+              "type": "number",
+              "alias": "deviceCustomNumber1"
+          },
+          {
+              "name": "baseEventCount",
+              "type": "number",
+              "alias": "baseEventCount"
+          },
+          {
+              "name": "startTime",
+              "type": "date",
+              "alias": "startTime"
+          },
+          {
+              "name": "deviceCustomNumber3",
+              "type": "number",
+              "alias": "deviceCustomNumber3"
+          },
+          {
+              "name": "agentSeverity",
+              "type": "string",
+              "alias": "agentSeverity"
+          },
+          {
+              "name": "fsize",
+              "type": "string",
+              "alias": "fsize"
+          },
+          {
+              "name": "deviceProduct",
+              "type": "string",
+              "alias": "deviceProduct"
+          },
+          {
+              "name": "deviceEventClassId",
+              "type": "string",
+              "alias": "deviceEventClassId"
+          },
+          {
+              "name": "deviceCustomNumber2Label",
+              "type": "string",
+              "alias": "deviceCustomNumber2Label"
+          },
+          {
+              "name": "deviceCustomString2Label",
+              "type": "string",
+              "alias": "deviceCustomString2Label"
+          },
+          {
+              "name": "fileType",
+              "type": "string",
+              "alias": "fileType"
+          },
+          {
+              "name": "deviceCustomString6",
+              "type": "string",
+              "alias": "deviceCustomString6"
+          },
+          {
+              "name": "deviceCustomString6Label",
+              "type": "string",
+              "alias": "deviceCustomString6Label"
+          },
+          {
+              "name": "deviceCustomString1",
+              "type": "string",
+              "alias": "deviceCustomString1"
+          },
+          {
+              "name": "deviceCustomString3",
+              "type": "string",
+              "alias": "deviceCustomString3"
+          },
+          {
+              "name": "deviceCustomString1Label",
+              "type": "string",
+              "alias": "deviceCustomString1Label"
+          },
+          {
+              "name": "deviceCustomString3Label",
+              "type": "string",
+              "alias": "deviceCustomString3Label"
+          },
+          {
+              "name": "destinationUserId",
+              "type": "string",
+              "alias": "destinationUserId"
+          },
+          {
+              "name": "destinationUserName",
+              "type": "string",
+              "alias": "destinationUserName"
+          },
+          {
+              "name": "sourceAddress",
+              "type": "string",
+              "alias": "sourceAddress"
+          },
+          {
+              "name": "message",
+              "type": "string",
+              "alias": "message"
+          },
+          {
+              "name": "deviceCustomString4",
+              "type": "string",
+              "alias": "deviceCustomString4"
+          },
+          {
+              "name": "deviceCustomString4Label",
+              "type": "string",
+              "alias": "deviceCustomString4Label"
+          },
+          {
+              "name": "fileId",
+              "type": "string",
+              "alias": "fileId"
+          }
+      ],
+      "results": [
+          [
+              "CC-0@Local",
+              1541447890136,
+              "Local",
+              "Logger",
+              1541448490709,
+              1541447890135,
+              "CurrentValue",
+              "127.0.0.1",
+              "used (MB)",
+              "6.6.0.8204.0",
+              "Storage Group Space Used",
+              "127.0.0.1",
+              "ArcSight",
+              "0",
+              "Percent Used",
+              "/Monitor/StorageGroup/Space/Used",
+              1541447890135,
+              "Default Storage Group",
+              180,
+              2,
+              1,
+              1541447890135,
+              1024,
+              "1",
+              "45",
+              "Logger",
+              "storagegroup:100",
+              "retention period (days)",
+              "timeframe",
+              "storageGroup",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+          ],
+          [
+              "CC-1@Local",
+              1541447890136,
+              "Local",
+              "Logger",
+              1541448490709,
+              1541447890136,
+              "CurrentValue",
+              "127.0.0.1",
+              "used (MB)",
+              "6.6.0.8204.0",
+              "Storage Group Space Used",
+              "127.0.0.1",
+              "ArcSight",
+              "0",
+              "Percent Used",
+              "/Monitor/StorageGroup/Space/Used",
+              1541447890136,
+              "Internal Event Storage Group",
+              365,
+              33,
+              1,
+              1541447890136,
+              1024,
+              "1",
+              "3",
+              "Logger",
+              "storagegroup:100",
+              "retention period (days)",
+              "timeframe",
+              "storageGroup",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+          ],
+      ]
   }
 ]
 ```
 
-<h3 id="createUsersWithArrayInput-parameters">Parameters</h3>
+After a successfull [search](#search) has been finalized you can now retrieve the data. There is several ways to retrieve it described in this document, all depending on how you want the returned data format to be.
 
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[UserArray](#schemauserarray)|true|List of user object|
+The event API call returns all events associated with the specified search id. If the hit count of the completed search is larger than 1000 then only the first 1000 events will be shown.
+This can be circumvented by setting the `length` parameter to a higher number, though the maximum is 10000 events on newer versions of the Logger (6.x i believe), and 1000 on older versions.
 
-<h3 id="createUsersWithArrayInput-responses">Responses</h3>
+### HTTP Request
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
+`POST https://HOSTNAME:9000/server/search/events`
 
-<aside class="success">
-This operation does not require authentication
-</aside>
+### URL Parameters
 
-## createUsersWithListInput
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
+dir | String | forward | In which order you want to sort the returned results, can be forward or backwards. | No
+fields | String | Null | Defines which fields are to be returned for each event, defaults to all fields. | No
+length | Number | 1000 | The maximum amount of events returned. | No
+offset | Number | Null | Which event count to start at, for example if more than maximum length is needed | No
 
-<a id="opIdcreateUsersWithListInput"></a>
+<aside class="warning">If you want to retrieve all events from a search that has a higher hit count than the maximum 10000, you will need to run several concurrent event API calls, each setting the value in the `offset` parameter higher, as this describes from which returned eventcount to start from.</aside>
 
-> Code samples
-
+## histogram
 ```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/user/createWithList \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/user/createWithList HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/createWithList',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '[
-  {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
-  }
-]';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/createWithList',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
+curl -X POST \
+  https://HOSTNAME:9000/server/search/histogram \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
-headers = {
-  'Content-Type' => 'application/json'
-}
+url = URI("https://HOSTNAME:9000/server/search/histogram")
 
-result = RestClient.post 'http://petstore.swagger.io/v2/user/createWithList',
-  params: {
-  }, headers: headers
+http = Net::HTTP.new(url.host, url.port)
 
-p JSON.parse(result)
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
 
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
 import requests
+
+url = "https://HOSTNAME:9000/server/search/histogram"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
 headers = {
-  'Content-Type': 'application/json'
+    'Accept': "application/json",
+    'Content-Type': "application/json"
 }
 
-r = requests.post('http://petstore.swagger.io/v2/user/createWithList', params={
+response = requests.request("POST", url, data=payload, headers=headers)
 
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/createWithList");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+print(response.text)
 ```
 
 ```go
 package main
 
 import (
-       "bytes"
-       "net/http"
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
 )
 
 func main() {
 
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
+  url := "https://HOSTNAME:9000/server/search/histogram"
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/user/createWithList", data)
-    req.Header = headers
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
 }
-
 ```
 
-`POST /user/createWithList`
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/histogram');
+$request->setMethod(HTTP_METH_POST);
 
-*Creates list of users with given input array*
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
 
-> Body parameter
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}');
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
+
+> The above request returns HTTP 200 OK and a JSON response structured like this:
 
 ```json
 [
   {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
+      "bucket_count": 74,
+      "bucket_width": 60000,
+      "start_bucket_time": 1541447890000,
+      "hits": [
+          4,
+          17,
+          17,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          23,
+          17,
+          18,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          18,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          20,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          0,
+          1,
+          0,
+          3
+      ]
   }
 ]
 ```
 
-<h3 id="createUsersWithListInput-parameters">Parameters</h3>
+Returns your events in an histogram format which is useful in cases you only want to retrieve data to be used in charts for example.
+The `bucket_count` is the amount of buckets collected, `bucket_width` is the time in milliseconds per bucket, `start_bucket_time` is the UNIXTIME or Epoch time value from when the starting timeframe and last `hits` are the amount of hits per `bucket_width` timeframe.
 
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[UserArray](#schemauserarray)|true|List of user object|
+### HTTP Request
 
-<h3 id="createUsersWithListInput-responses">Responses</h3>
+`POST https://HOSTNAME:9000/server/search/histogram`
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
+### URL Parameters
 
-<aside class="success">
-This operation does not require authentication
-</aside>
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
 
-## loginUser
-
-<a id="opIdloginUser"></a>
-
-> Code samples
-
+## raw_events
 ```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/login',
-  method: 'get',
-  data: '?username=string&password=pa%24%24word',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
+curl -X POST \
+  https://HOSTNAME:9000/server/search/raw_events \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "row_ids": ["CC-0@Local", "CC-1@Local"]
+}'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
-headers = {
-  'Accept' => 'application/xml'
-}
+url = URI("https://HOSTNAME:9000/server/search/raw_events")
 
-result = RestClient.get 'http://petstore.swagger.io/v2/user/login',
-  params: {
-  'username' => 'string',
-'password' => 'string(password)'
-}, headers: headers
+http = Net::HTTP.new(url.host, url.port)
 
-p JSON.parse(result)
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"row_ids\": [\"CC-0@Local\", \"CC-1@Local\"]\r\n}"
 
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
 import requests
+
+url = "https://HOSTNAME:9000/server/search/raw_events"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"row_ids\": [\"CC-0@Local\", \"CC-1@Local\"]\r\n}"
 headers = {
-  'Accept': 'application/xml'
+    'Accept': "application/json",
+    'Content-Type': "application/json",
 }
 
-r = requests.get('http://petstore.swagger.io/v2/user/login', params={
-  'username': 'string',  'password': 'pa$$word'
-}, headers = headers)
+response = requests.request("POST", url, data=payload, headers=headers)
 
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+print(response.text)
 ```
 
 ```go
 package main
 
 import (
-       "bytes"
-       "net/http"
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
 )
 
 func main() {
 
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        
+  url := "https://HOSTNAME:9000/server/search/raw_events"
+
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"row_ids\": [\"CC-0@Local\", \"CC-1@Local\"]\r\n}")
+
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
+}
+```
+
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/raw_events');
+$request->setMethod(HTTP_METH_POST);
+
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
+
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "row_ids": ["CC-0@Local", "CC-1@Local"]
+}');
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
+
+> The above request returns HTTP 200 OK and all raw events in an array:
+
+```json
+[
+    "CEF:0|ArcSight|Logger|6.6.0.8204.0|storagegroup:100|Storage Group Space Used|1| cat=/Monitor/StorageGroup/Space/Used cn1=2 cn1Label=Percent Used cn2=180 cn2Label=retention period (days) cn3=1024 cn3Label=used (MB) cs2=CurrentValue cs2Label=timeframe dst=127.0.0.1 dvc=127.0.0.1 end=1541447890135 fileType=storageGroup fname=Default Storage Group fsize=45 rt=1541447890135",
+    "CEF:0|ArcSight|Logger|6.6.0.8204.0|storagegroup:100|Storage Group Space Used|1| cat=/Monitor/StorageGroup/Space/Used cn1=33 cn1Label=Percent Used cn2=365 cn2Label=retention period (days) cn3=1024 cn3Label=used (MB) cs2=CurrentValue cs2Label=timeframe dst=127.0.0.1 dvc=127.0.0.1 end=1541447890136 fileType=storageGroup fname=Internal Event Storage Group fsize=3 rt=1541447890136"
+]
+```
+
+The raw_events API endpoint is utilized to retrieve raw logging from specific rows of your search results. Retrieving the [events](#events) from a successful [search](#search) normally specifies the appropriate row id's on the first column, as can be seen from the example.
+
+### HTTP Request
+
+`POST https://HOSTNAME:9000/server/search/raw_events`
+
+### URL Parameters
+
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
+row_ids | Array of Strings | null | The specific row_ids wanted from a finalized search | Yes
+
+## status
+```shell
+curl -X POST \
+  https://HOSTNAME:9000/server/search/status \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}'
+```
+
+```ruby
+require 'uri'
+require 'net/http'
+
+url = URI("https://HOSTNAME:9000/server/search/status")
+
+http = Net::HTTP.new(url.host, url.port)
+
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
+
+response = http.request(request)
+puts response.read_body
+```
+
+```python
+import requests
+
+url = "https://HOSTNAME:9000/server/search/status"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
+headers = {
+    'Accept': "application/json",
+    'Content-Type': "application/json"
+}
+
+response = requests.request("POST", url, data=payload, headers=headers)
+
+print(response.text)
+```
+
+```go
+package main
+
+import (
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
+)
+
+func main() {
+
+  url := "https://HOSTNAME:9000/server/search/status"
+
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}")
+
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
+}
+```
+
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/status');
+$request->setMethod(HTTP_METH_POST);
+
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
+
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}');
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
+
+> The above request returns HTTP 200 OK and a JSON response structured like this:
+
+```json
+[
+  {
+      "status": "complete",
+      "result_type": "histogram",
+      "hit": 1726,
+      "scanned": 1726,
+      "elapsed": "00:00:00.276",
+      "message": []
+  }
+]
+```
+
+The status API endpoint is used to monitor the current status of any existing [search](#search). 
+
+### HTTP Request
+
+`POST https://HOSTNAME:9000/server/search/status`
+
+### URL Parameters
+
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
+
+<aside class="warning">In certain cases, for example when a search creates an error, the HTTP response is still 200 OK, though the status is then changed to "error". Keep in mind if you only utilize HTTP status codes for error checking.</aside>
+
+## search
+```shell
+curl -X POST \
+  https://HOSTNAME:9000/server/search \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id": "qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "discover_fields": false,
+    "end_time": "2018-10-26T11:00:00.000Z",
+    "summary_fields": ["Event Time", "Device", "Logger", "Raw Message", "deviceVendor", "deviceProduct", "deviceVersion", "deviceEventClassId", "name"],
+    "field_summary": false, 
+    "local_search": true,
+    "query":"",
+    "search_type":"interactive",
+    "start_time":"2018-10-26T09:00:00.000Z",
+    "timeout": 120000
+}'
+```
+
+```ruby
+require 'uri'
+require 'net/http'
+
+url = URI("https://HOSTNAME:9000/server/search")
+
+http = Net::HTTP.new(url.host, url.port)
+
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"discover_fields\": false,\r\n    \"end_time\": \"2018-10-26T11:00:00.000Z\",\r\n    \"summary_fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"field_summary\": false, \r\n    \"local_search\": true,\r\n    \"query\":\"\",\r\n    \"search_type\":\"interactive\",\r\n    \"start_time\":\"2018-10-26T09:00:00.000Z\",\r\n    \"timeout\": 120000\r\n}"
+
+response = http.request(request)
+puts response.read_body
+```
+
+```python
+import requests
+
+url = "https://HOSTNAME:9000/server/search"
+
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"discover_fields\": false,\r\n    \"end_time\": \"2018-10-26T11:00:00.000Z\",\r\n    \"summary_fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"field_summary\": false, \r\n    \"local_search\": true,\r\n    \"query\":\"\",\r\n    \"search_type\":\"interactive\",\r\n    \"start_time\":\"2018-10-26T09:00:00.000Z\",\r\n    \"timeout\": 120000\r\n}"
+headers = {
+    'Accept': "application/json",
+    'Content-Type': "application/json",
     }
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/user/login", data)
-    req.Header = headers
+response = requests.request("POST", url, data=payload, headers=headers)
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
+print(response.text)
 ```
 
-`GET /user/login`
+```go
+package main
 
-*Logs user into the system*
+import (
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
+)
 
-<h3 id="loginUser-parameters">Parameters</h3>
+func main() {
 
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|query|string|true|The user name for login|
-|password|query|string(password)|true|The password for login in clear text|
+  url := "https://HOSTNAME:9000/server/search"
 
-> Example responses
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"discover_fields\": false,\r\n    \"end_time\": \"2018-10-26T11:00:00.000Z\",\r\n    \"summary_fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"field_summary\": false, \r\n    \"local_search\": true,\r\n    \"query\":\"\",\r\n    \"search_type\":\"interactive\",\r\n    \"start_time\":\"2018-10-26T09:00:00.000Z\",\r\n    \"timeout\": 120000\r\n}")
+
+  req, _ := http.NewRequest("POST", url, payload)
+
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
+
+  res, _ := http.DefaultClient.Do(req)
+
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
+
+  fmt.Println(res)
+  fmt.Println(string(body))
+
+}
+```
+
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search');
+$request->setMethod(HTTP_METH_POST);
+
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
+
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id": "qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
+    "discover_fields": false,
+    "end_time": "2018-10-26T11:00:00.000Z",
+    "summary_fields": ["Event Time", "Device", "Logger", "Raw Message", "deviceVendor", "deviceProduct", "deviceVersion", "deviceEventClassId", "name"],
+    "field_summary": false, 
+    "local_search": true,
+    "query":"",
+    "search_type":"interactive",
+    "start_time":"2018-10-26T09:00:00.000Z",
+    "timeout": 120000
+}');
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+```
+
+> The above request returns HTTP 200 OK and a JSON response structured like this:
 
 ```json
-"string"
-```
-
-<h3 id="loginUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|string|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid username/password supplied|None|
-
-### Response Headers
-
-|Status|Header|Type|Format|Description|
-|---|---|---|---|---|
-|200|X-Rate-Limit|integer|int32|calls per hour allowed by the user|
-|200|X-Expires-After|string|date-time|date in UTC when token expires|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## logoutUser
-
-<a id="opIdlogoutUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/user/logout
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/user/logout HTTP/1.1
-Host: petstore.swagger.io
-
-```
-
-```javascript
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/logout',
-  method: 'get',
-
-  success: function(data) {
-    console.log(JSON.stringify(data));
+[
+  {
+      "sessionId": "18"
   }
-})
-
+]
 ```
 
-```javascript--nodejs
-const request = require('node-fetch');
+The search API endpoint is utilized when you want to retrieve any sort of data or information. When a search is executed a [status](#status) API call can be used to check if it is ongoing, have completed or failed.
 
-fetch('http://petstore.swagger.io/v2/user/logout',
-{
-  method: 'GET'
+When creating a search the minimum amount of information you need to provide is an `user_session_id` and a `search_session_id`.
 
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
+If no other information is provided it will run the search with it's default values.
 
+It is important to know that the `search_session_id` is a integer value set by the user and not the application. While there exists certain situations where two searches can be run with the same ID it is not recommended, for example you can run a new search with the same ID if the first one has finalized.
+
+It is recommended to set the `search_session_id` to an ever increasing numerical value, like UNIXTIME/Epoch time to ensure there is never any situations which can cause an duplicated entry.
+
+If you are experiencing that a search is missing once complete then it is important to note that the default timeout value is quite low. This is the timeout for when the search, when finished, removes itself and the results and not for how long it can run.
+
+The returned `SessionID` in the response when successfully initiating a search is the reference ID internally on the Logger, this is not reused anywhere in your API calls.
+It only allows you to login to the Logger web interface, click on Configuration in the top menu and choose Running Searches to display the currently active searches, with a SessionID to differentiate them.
+
+<aside class="warning">A search is linked to your current authToken, meaning that if the user session ever times out, the search and it's results is lost.</aside>
+<aside class="warning">Examples currently do not escape special characters in the query parameter, added on todo</aside>
+
+### HTTP Request
+
+`POST https://HOSTNAME:9000/server/search`
+
+### URL Parameters
+
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
+discover_fields | Boolean | false | If new fields should be discovered for the returned events | If field_summary is true
+end_time | Timestamp | null | End time for when providing a specific timeframe | If start_time is specified
+start_time | Timestamp | Timestamp 2 hours back from current | Start time for when providing a specific timeframe | If end_time is specified
+summary_fields | Array of Strings | Values in example | List of displaynames of fields if creating a summary | If field_summary is true
+field_summary | Boolean | false | Indicates if you want to retrieve a field summary | No
+local_search | Boolean | true | If utilizing Logger Pools and you want to search over all loggers | No
+query | String | null(*) | A single string representing your whole query, as being run on the Logger Web interface | No
+search_type | String | interactive | Only supports interactive, so don't know why this is a parameter | No
+timeout | Number | 120000 | How many milliseconds the search and it's results is stored after completed | No
+
+
+## stop
+```shell
+curl -X POST \
+  https://HOSTNAME:9000/server/search/stop \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}'
 ```
 
 ```ruby
-require 'rest-client'
-require 'json'
+require 'uri'
+require 'net/http'
 
-result = RestClient.get 'http://petstore.swagger.io/v2/user/logout',
-  params: {
-  }
+url = URI("https://HOSTNAME:9000/server/search/stop")
 
-p JSON.parse(result)
+http = Net::HTTP.new(url.host, url.port)
 
+request = Net::HTTP::Post.new(url)
+request["Accept"] = 'application/json'
+request["Content-Type"] = 'application/json'
+request.body = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
+
+response = http.request(request)
+puts response.read_body
 ```
 
 ```python
 import requests
 
-r = requests.get('http://petstore.swagger.io/v2/user/logout', params={
+url = "https://HOSTNAME:9000/server/search/stop"
 
-)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/logout");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/user/logout", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /user/logout`
-
-*Logs out current logged in user session*
-
-<h3 id="logoutUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## getUserByName
-
-<a id="opIdgetUserByName"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/user/{username} \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/user/{username} HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/{username}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/{username}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
+payload = "{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"
 headers = {
-  'Accept' => 'application/xml'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/user/{username}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/user/{username}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/{username}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        
+    'Accept': "application/json",
+    'Content-Type': "application/json",
     }
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/user/{username}", data)
-    req.Header = headers
+response = requests.request("POST", url, data=payload, headers=headers)
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /user/{username}`
-
-*Get user by user name*
-
-<h3 id="getUserByName-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|path|string|true|The name that needs to be fetched. Use user1 for testing. |
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<User>
-  <id>0</id>
-  <username>string</username>
-  <firstName>string</firstName>
-  <lastName>string</lastName>
-  <email>string</email>
-  <password>string</password>
-  <phone>string</phone>
-  <userStatus>0</userStatus>
-</User>
-```
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-<h3 id="getUserByName-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[User](#schemauser)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid username supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## updateUser
-
-<a id="opIdupdateUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X PUT http://petstore.swagger.io/v2/user/{username} \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-PUT http://petstore.swagger.io/v2/user/{username} HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/{username}',
-  method: 'put',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/{username}',
-{
-  method: 'PUT',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.put 'http://petstore.swagger.io/v2/user/{username}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.put('http://petstore.swagger.io/v2/user/{username}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/{username}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("PUT");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+print(response.text)
 ```
 
 ```go
 package main
 
 import (
-       "bytes"
-       "net/http"
+  "fmt"
+  "strings"
+  "net/http"
+  "io/ioutil"
 )
 
 func main() {
 
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
+  url := "https://HOSTNAME:9000/server/search/stop"
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("PUT", "http://petstore.swagger.io/v2/user/{username}", data)
-    req.Header = headers
+  payload := strings.NewReader("{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
+  req, _ := http.NewRequest("POST", url, payload)
 
-```
+  req.Header.Add("Accept", "application/json")
+  req.Header.Add("Content-Type", "application/json")
 
-`PUT /user/{username}`
+  res, _ := http.DefaultClient.Do(req)
 
-*Updated user*
+  defer res.Body.Close()
+  body, _ := ioutil.ReadAll(res.Body)
 
-This can only be done by the logged in user.
+  fmt.Println(res)
+  fmt.Println(string(body))
 
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
 }
 ```
 
-<h3 id="updateUser-parameters">Parameters</h3>
+```php
+$request = new HttpRequest();
+$request->setUrl('https://HOSTNAME:9000/server/search/stop');
+$request->setMethod(HTTP_METH_POST);
 
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|path|string|true|name that need to be updated|
-|body|body|[User](#schemauser)|true|Updated user object|
+$request->setHeaders(array(
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+));
 
-<h3 id="updateUser-responses">Responses</h3>
+$request->setBody('{
+    "search_session_id": 100003,
+    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
+}');
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid user supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|None|
+try {
+  $response = $request->send();
 
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## deleteUser
-
-<a id="opIddeleteUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X DELETE http://petstore.swagger.io/v2/user/{username}
-
-```
-
-```http
-DELETE http://petstore.swagger.io/v2/user/{username} HTTP/1.1
-Host: petstore.swagger.io
-
-```
-
-```javascript
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/{username}',
-  method: 'delete',
-
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-fetch('http://petstore.swagger.io/v2/user/{username}',
-{
-  method: 'DELETE'
-
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-result = RestClient.delete 'http://petstore.swagger.io/v2/user/{username}',
-  params: {
-  }
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-
-r = requests.delete('http://petstore.swagger.io/v2/user/{username}', params={
-
-)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/{username}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("DELETE", "http://petstore.swagger.io/v2/user/{username}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`DELETE /user/{username}`
-
-*Delete user*
-
-This can only be done by the logged in user.
-
-<h3 id="deleteUser-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|path|string|true|The name that needs to be deleted|
-
-<h3 id="deleteUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid username supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-# Schemas
-
-<h2 id="tocSorder">Order</h2>
-
-<a id="schemaorder"></a>
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
 }
 ```
 
-### Properties
+> The above request returns an empty HTTP 200 OK response upon success
 
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|petId|integer(int64)|false|No description|
-|quantity|integer(int32)|false|No description|
-|shipDate|string(date-time)|false|No description|
-|status|string|false|Order Status|
-|complete|boolean|false|No description|
+The stop API call ends a currently active search. The difference between stop and [close](#close) is that the results that are already found is still available to be retrieved until the timeout specified when running your [search](#search)
 
-#### Enumerated Values
+### HTTP Request
 
-|Property|Value|
-|---|---|
-|status|placed|
-|status|approved|
-|status|delivered|
+`POST https://HOSTNAME:9000/server/search/stop`
 
-<h2 id="tocScategory">Category</h2>
+### URL Parameters
 
-<a id="schemacategory"></a>
-
-```json
-{
-  "id": 0,
-  "name": "string"
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|name|string|false|No description|
-
-<h2 id="tocSuser">User</h2>
-
-<a id="schemauser"></a>
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|username|string|false|No description|
-|firstName|string|false|No description|
-|lastName|string|false|No description|
-|email|string|false|No description|
-|password|string|false|No description|
-|phone|string|false|No description|
-|userStatus|integer(int32)|false|User Status|
-
-<h2 id="tocStag">Tag</h2>
-
-<a id="schematag"></a>
-
-```json
-{
-  "id": 0,
-  "name": "string"
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|name|string|false|No description|
-
-<h2 id="tocSpet">Pet</h2>
-
-<a id="schemapet"></a>
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|category|[Category](#schemacategory)|false|No description|
-|name|string|true|No description|
-|photoUrls|[string]|true|No description|
-|tags|[[Tag](#schematag)]|false|No description|
-|status|string|false|pet status in the store|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-<h2 id="tocSapiresponse">ApiResponse</h2>
-
-<a id="schemaapiresponse"></a>
-
-```json
-{
-  "code": 0,
-  "type": "string",
-  "message": "string"
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|code|integer(int32)|false|No description|
-|type|string|false|No description|
-|message|string|false|No description|
-
-<script type="application/ld+json">
-{
-  "@context": "http://schema.org/",
-  "@type": "WebAPI",
-  "description": ":dog: :cat: :rabbit: This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
-  "documentation": "https://mermade.github.io/shins/asyncapi.html",
-  "termsOfService": "http://swagger.io/terms/",
-  
-  "name": "Swagger Petstore"
-}
-</script>
-
+Parameter | Type | Default | Description | Required |
+--------- | ---- | ------- | ----------- | -------- |
+search_session_id | Number | null | The choosen search session used when creating the search | Yes
+user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
