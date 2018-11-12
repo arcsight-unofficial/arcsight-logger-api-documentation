@@ -629,8 +629,8 @@ curl -X POST \
   -d '{
     "search_session_id": 100003,
     "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
-    "end_time":"",
-    "start_time":""
+    "end_time":"2018-10-26T09:00:00.000Z",
+    "start_time":"2018-10-26T09:00:00.000Z"
 }'
 ```
 
