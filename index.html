@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Swagger Petstore v1.0.0</title>
+    <title>Unofficial ArcSight Logger API Documentation</title>
 
     <style>
     </style>
@@ -95,11 +95,6 @@ window.onpopstate = function() {
           </li>
         
           <li>
-            <a href="#mandatory-legal-part" class="toc-h1 toc-link" data-title="Mandatory legal part">Mandatory legal part</a>
-            
-          </li>
-        
-          <li>
             <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
             
           </li>
@@ -177,12 +172,22 @@ window.onpopstate = function() {
             
           </li>
         
+          <li>
+            <a href="#http-status-codes" class="toc-h1 toc-link" data-title="HTTP Status Codes">HTTP Status Codes</a>
+            
+          </li>
+        
+          <li>
+            <a href="#legal" class="toc-h1 toc-link" data-title="Legal">Legal</a>
+            
+          </li>
+        
 		</ul>
       </div>
       
         <ul class="toc-footer">
           
-            <li><a href="https://github.com/Mermade/shins">Powered by Shin</a></li>
+            <li><li><a href="https://github.com/Mermade/shins">Updates available on Github</a></li> <li><a href="https://github.com/Mermade/shins">Powered by Shin</a></li></li>
           
         </ul>
       
@@ -192,19 +197,14 @@ window.onpopstate = function() {
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 <p>Welcome to the unofficial API documentation for the Microfocus ArcSight Logger. This document describes all API endpoints available to users of the ArcSight Logger product.</p>
-<p>The API itself supports only actions related to generating searches and retrieving it's results, and will only cover the endpoints available to the RESTful API.</p>
-<h1 id="mandatory-legal-part">Mandatory legal part</h1>
-<p>All mentions of Microfocus, ArcSight and Logger is trademarked to Microfocus, this documentation is a collected source of educational material, any usage of products mentioned in this documentation requires a commercial license with MicroFocus or any of it's partners.</p>
-<p>The documentation or associated open source software is not in any way part of the official documentation provided by Micro Focus and therefore not included in any support contract. It does not represent or try to imitate any products or services offered by Microfocus.</p>
-<p>The documentation is provided &quot;as-is&quot; and can be changed or updated at any time, keeping it up to date for all versions is done by &quot;best-effort&quot;.</p>
-<p>While i do my best to keep this as updated as possible, there might be cases in which i am unable to do so, but anyone is allowed to fork, change or contribute to this project in any way they see fit.</p>
-<p>Any other legal parts is covered in the LICENSE file and it's associated links.</p>
+<p>The API itself supports only actions related to generating searches and retrieving it's results.</p>
+<p>Only endpoints available in the RESTful API will be covered.</p>
 <h1 id="authentication">Authentication</h1>
-<p>To communicate with the API you need to include a so called API Token, this token is given to you after posting your username and password to the <a href="#login">login</a> API endpoint. All further references to authToken during this documentation is related to that.</p>
-<p>Please remember that all searches are related to your API token, this means that if your session times out due to inactivity, your search is lost, as logging in again will give you a new token.</p>
-<p>After finalizing your actions, please remember to always <a href="#logout">logout</a></p>
+<p>To communicate with the API you need to include a so called API Token, this token is given to you after posting your username and password to the <a href="#login">login</a> API endpoint. All further references to <code>authToken</code> or <code>user_session_id</code> during this documentation is related to that.</p>
+<p>Please remember that all searches are related to your API token, this means that if your session times out due to inactivity, your <a href="#search">search</a> and it's relevant data is lost. To retrieve it a new <a href="#search">search</a> will have to be made.</p>
+<p>After finalizing your actions, please remember to always <a href="#logout">logout</a> to prevent a flood of inactive usersessions.</p>
 <aside class="notice">
-Make sure to replace <code>authToken</code> with the authToken returned in the login response for all other API calls.
+Make sure to replace <code>authToken</code> or <code>user_session_id</code> with the authToken returned in the login response for all other API calls.
 </aside>
 <h1 id="loginservice">LoginService</h1>
 <h2 id="login">login</h2>
@@ -219,15 +219,20 @@ Make sure to replace <code>authToken</code> with the authToken returned in the l
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
 url = URI(<span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/login"</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
 request = Net::HTTP::Post.new(url)
 request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
 request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/x-www-form-urlencoded'</span>
 request.body = <span class="hljs-string">"login=USERNAME&amp;password=PASSWORD"</span>
+
 
 response = http.request(request)
 puts response.read_body
@@ -236,13 +241,17 @@ puts response.read_body
 
 url = <span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/login"</span>
 
-payload = <span class="hljs-string">"login=USERNAME&amp;password=PASSWORD"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/x-www-form-urlencoded"</span>,
+payload = {
+  <span class="hljs-string">'login'</span>: <span class="hljs-string">'USERNAME'</span>,
+  <span class="hljs-string">'password'</span>: <span class="hljs-string">'PASSWORD'</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/x-www-form-urlencoded"</span>,
+}
+
+response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
@@ -250,67 +259,71 @@ print(response.text)
 
 <span class="hljs-keyword">import</span> (
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
+  <span class="hljs-string">"net/url"</span>
+  <span class="hljs-string">"strings"</span>
 )
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+  u := <span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/login"</span>
 
-  url := <span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/login"</span>
+  values := url.Values{}
+  values.Set(<span class="hljs-string">"login"</span>, <span class="hljs-string">"USERNAME"</span>)
+  values.Set(<span class="hljs-string">"password"</span>, <span class="hljs-string">"PASSWORD"</span>)
 
-  payload := strings.NewReader(<span class="hljs-string">"login=USERNAME&amp;password=PASSWORD"</span>)
-
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
-
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, u, strings.NewReader(values.Encode()))
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatal(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/x-www-form-urlencoded"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatal(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
-
-  fmt.Println(res)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatal(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/core-service/rest/LoginService/login'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/x-www-form-urlencoded'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/core-service/rest/LoginService/login'</span>,
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/x-www-form-urlencoded'</span>,
+    ],
+    <span class="hljs-string">'form_params'</span> =&gt; [
+        <span class="hljs-string">'login'</span>  =&gt; <span class="hljs-string">'USERNAME'</span>,
+        <span class="hljs-string">'password'</span>=&gt; <span class="hljs-string">'PASSWORD'</span>
+    ]
+]);
 
-$request-&gt;setContentType(<span class="hljs-string">'application/x-www-form-urlencoded'</span>);
-$request-&gt;setPostFields(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'login'</span> =&gt; <span class="hljs-string">'USERNAME'</span>,
-  <span class="hljs-string">'password'</span> =&gt; <span class="hljs-string">'PASSWORD'</span>
-));
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
-<pre class="highlight tab tab-json"><code>[
-  {
-      <span class="hljs-attr">"log.loginResponse"</span>: {
-          <span class="hljs-attr">"log.return"</span>: <span class="hljs-string">"7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."</span>
-      }
-  }
-]
+<pre class="highlight tab tab-json"><code>{
+    <span class="hljs-attr">"log.loginResponse"</span>: {
+        <span class="hljs-attr">"log.return"</span>: <span class="hljs-string">"7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."</span>
+    }
+}
 </code></pre>
-<p>Returns a token used in all other API endpoints. This API call also supports GET with query parameters, but this is not recommended, as any sensitive data would be stored on the webservers and proxies utilizing this.</p>
+<p>Returns a token used in all other API endpoints. This API call also supports GET with query parameters, but this is not recommended, as any sensitive data would be stored on the webservers and proxies related to these API calls.</p>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/core-service/rest/LoginService/login</code></p>
 <h3 id="query-parameters">Query Parameters</h3>
@@ -350,10 +363,14 @@ $request-&gt;setPostFields(<span class="hljs-keyword">array</span>(
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
 url = URI(<span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/logout"</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
 request = Net::HTTP::Post.new(url)
 request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
@@ -367,13 +384,16 @@ puts response.read_body
 
 url = <span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/logout"</span>
 
-payload = <span class="hljs-string">"authToken=7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/x-www-form-urlencoded"</span>,
+payload = {
+  <span class="hljs-string">'authToken'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/x-www-form-urlencoded"</span>,
+}
+
+response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
@@ -381,53 +401,58 @@ print(response.text)
 
 <span class="hljs-keyword">import</span> (
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
+  <span class="hljs-string">"net/url"</span>
+  <span class="hljs-string">"strings"</span>
 )
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+  u := <span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/logout"</span>
 
-  url := <span class="hljs-string">"https://HOSTNAME:9000/core-service/rest/LoginService/logout"</span>
+  values := url.Values{}
+  values.Set(<span class="hljs-string">"authToken"</span>, <span class="hljs-string">"7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."</span>)
 
-  payload := strings.NewReader(<span class="hljs-string">"authToken=7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo."</span>)
-
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
-
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, u, strings.NewReader(values.Encode()))
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatal(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/x-www-form-urlencoded"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatal(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
-
-  fmt.Println(res)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatal(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/core-service/rest/LoginService/logout'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/x-www-form-urlencoded'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/core-service/rest/LoginService/logout'</span>,
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/x-www-form-urlencoded'</span>,
+    ],
+    <span class="hljs-string">'form_params'</span> =&gt; [
+        <span class="hljs-string">'authToken'</span>  =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
+    ]
+]);
 
-$request-&gt;setContentType(<span class="hljs-string">'application/x-www-form-urlencoded'</span>);
-$request-&gt;setPostFields(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'authToken'</span> =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
-));
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP Response 204 No Content on success:</p>
@@ -472,61 +497,102 @@ $request-&gt;setPostFields(<span class="hljs-keyword">array</span>(
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
 url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/chart_data'</span>)
 
-json_headers = {<span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-                <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>}
-
-data = {<span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>,
-        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
-        <span class="hljs-string">'length'</span> =&gt; <span class="hljs-number">100</span>, <span class="hljs-string">'offset'</span> =&gt; <span class="hljs-number">0</span>}
-
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
+
+data = {
+  <span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+  <span class="hljs-string">'length'</span> =&gt; <span class="hljs-number">100</span>,
+  <span class="hljs-string">'offset'</span> =&gt; <span class="hljs-number">0</span>
+}
 
 response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/chart_data"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/chart_data'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+  <span class="hljs-string">'lenght'</span>: <span class="hljs-number">100</span>,
+  <span class="hljs-string">'offset'</span>: <span class="hljs-number">0</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
+
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> ChartDataSearch <span class="hljs-keyword">struct</span> {
+  SessionID     <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"user_session_id"`</span>
+  Length        <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"length"`</span>
+  Offset        <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"offset"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/chart_data"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"length\": 100,\r\n    \"offset\": 0\r\n}"</span>)
+  search := ChartDataSearch{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+    Length:        <span class="hljs-number">100</span>,
+    Offset:        <span class="hljs-number">0</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
@@ -535,6 +601,7 @@ print(response.text)
 
 $client = <span class="hljs-keyword">new</span> Client([
     <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/chart_data'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
     <span class="hljs-string">'headers'</span>   =&gt; [
         <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
         <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
@@ -552,9 +619,9 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 <span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
-<p>The above request returns HTTP Response 204 No Content on success:</p>
+<p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
-<p>Returns results from your search formatted to be used in charts or statistics, can also return values of search using aggregations like sort or head in their query.</p>
+<p>Returns results from your aggregated <a href="#search">search</a> formatted to be used in charts or statistics.</p>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/server/search/chart_data</code></p>
 <h3 id="url-parameters">URL Parameters</h3>
@@ -571,7 +638,7 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -585,21 +652,21 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 </tr>
 <tr>
 <td>length</td>
-<td>Number</td>
+<td>Integer</td>
 <td>25</td>
 <td>The amount of results you want to retrieve, maximum value is 100</td>
 <td>No</td>
 </tr>
 <tr>
 <td>offset</td>
-<td>Number</td>
+<td>Integer</td>
 <td>0</td>
 <td>Auth Token that you want to logout</td>
 <td>No</td>
 </tr>
 </tbody>
 </table>
-<aside class="warning">If no aggregation is used in the query during the intial search, the response will tell you that the search is not in a format that is supported for this API Endpoint</aside>
+<aside class="info">Your search query will have to include aggregation for this endpoint to work</aside>
 <h2 id="close">close</h2>
 <pre class="highlight tab tab-shell"><code>curl -X POST \
   https://HOSTNAME:9000/server/search/close \
@@ -612,89 +679,121 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
 url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>)
 
-json_headers = {<span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-                <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>}
-
-data = {<span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>, <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>}
-
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
+
+data = {
+  <span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
+}
 
 response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/close"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
+
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Close <span class="hljs-keyword">struct</span> {
+  SessionID     <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"user_session_id"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/close"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>)
+  search := Close{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns an empty HTTP 200 OK response upon success</p>
 </blockquote>
-<p>This API call closes a search that has finalized. Search results from an API call is stored locally until the timeout you specified in your <a href="#search">search</a>, if you set a higher timeout to ensure data is not removed until you have finished your actions, you might want to remove your search manually before the timeout period, this is done with this API call.</p>
+<p>This API call closes a <a href="#search">search</a> and removes all data related to it. This can be used if the data you want is retrieved and you want to delete the local storage used for it's search results before it times out.</p>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/server/search/close</code></p>
 <h3 id="url-parameters">URL Parameters</h3>
@@ -711,7 +810,7 @@ $request-&gt;setBody(<span class="hljs-string">'{
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -739,97 +838,132 @@ $request-&gt;setBody(<span class="hljs-string">'{
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/close'</span>)
-
-json_headers = {<span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-                <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>}
-
-data = {<span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>, 
-        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
-        <span class="hljs-string">'start_time'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
-        <span class="hljs-string">'end_time'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
-
-          }
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/drilldown'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
+
+data = {
+  <span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+  <span class="hljs-string">'start_time'</span> =&gt; <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>,
+  <span class="hljs-string">'end_time'</span> =&gt; <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>
+}
 
 response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/drilldown"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/drilldown'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+  <span class="hljs-string">'start_time'</span>: <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>,
+  <span class="hljs-string">'end_time'</span>: <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
+
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Drilldown <span class="hljs-keyword">struct</span> {
+  SessionID       <span class="hljs-keyword">int</span>       <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID   <span class="hljs-keyword">string</span>    <span class="hljs-string">`json:"user_session_id"`</span>
+  StartTime       <span class="hljs-keyword">string</span>    <span class="hljs-string">`json:"start_time"`</span>
+  EndTime         <span class="hljs-keyword">string</span>    <span class="hljs-string">`json:"end_time"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/drilldown"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"end_time\":\"\",\r\n    \"start_time\":\"\"\r\n}"</span>)
+  search := ChartDataSearch{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+    StartTime:     <span class="hljs-string">"2018-10-26T09:00:00.000Z"</span>,
+    EndTime:       <span class="hljs-string">"2018-10-26T09:00:00.000Z"</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/drilldown'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/drilldown'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+        <span class="hljs-string">'start_time'</span> =&gt; <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>,
+        <span class="hljs-string">'end_time'</span> =&gt; <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
-    "end_time":"",
-    "start_time":""
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns an empty HTTP 200 OK response upon success</p>
 </blockquote>
 <p>In certain cases you might want to only retrieve data from a specific time range even though your search was performed in a much larger timeframe.
-This API call is used to change the timeframe of a currently completed search. First a <a href="#search">search</a> is initiated, when the <a href="#status">status</a> API call shows a successfully completed search you are able to utilize this <a href="#drilldown">drilldown</a> API call to change the timeframe. If this returns an empty HTTP 200 OK response you can utilize any of the retrieval API calls to retrieve the same search, to only receive data within your newly defined <code>start_time</code> and <code>end_time</code></p>
+This API call is used to change the timeframe of a currently completed search. First a <a href="#search">search</a> is initiated, when the <a href="#status">status</a> API call shows a successfully completed search you are able to utilize this <a href="#drilldown">drilldown</a> API call to change the timeframe. If this returns an empty HTTP 200 OK response you can utilize any of the retrieval API calls to retrieve the same search, to only receive data within your newly defined <code>start_time</code> and <code>end_time</code> without having to run the <a href="#search">search</a> again.</p>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/server/search/drilldown</code></p>
 <h3 id="url-parameters">URL Parameters</h3>
@@ -846,7 +980,7 @@ This API call is used to change the timeframe of a currently completed search. F
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -861,14 +995,14 @@ This API call is used to change the timeframe of a currently completed search. F
 <tr>
 <td>end_time</td>
 <td>timestamp</td>
-<td>ANY</td>
+<td>null</td>
 <td>The new end time to be used for your finished search</td>
 <td>Yes</td>
 </tr>
 <tr>
 <td>start_time</td>
 <td>timestamp</td>
-<td>ANY</td>
+<td>null</td>
 <td>The new start time to be used for your finished search</td>
 <td>Yes</td>
 </tr>
@@ -890,407 +1024,448 @@ This API call is used to change the timeframe of a currently completed search. F
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/events"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/events'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"dir\": \"forward\",\r\n    \"fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"length\": 1000,\r\n    \"offset\": 0\r\n}"</span>
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
 
-response = http.request(request)
+data = {
+  <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+  <span class="hljs-string">'dir'</span> =&gt; <span class="hljs-string">'forward'</span>,
+  <span class="hljs-string">'length'</span> =&gt; <span class="hljs-number">1000</span>,
+  <span class="hljs-string">'offset'</span> =&gt; <span class="hljs-number">0</span>
+}
+
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/events"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/events'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"dir\": \"forward\",\r\n    \"fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"length\": 1000,\r\n    \"offset\": 0\r\n}"</span>
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+  <span class="hljs-string">'dir'</span>: <span class="hljs-string">'forward'</span>,
+  <span class="hljs-string">'length'</span>: <span class="hljs-number">1000</span>,
+  <span class="hljs-string">'offset'</span>: <span class="hljs-number">0</span>
+}
+
 headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
-    }
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Events <span class="hljs-keyword">struct</span> {
+  SessionID     <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"user_session_id"`</span>
+  Length        <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"length"`</span>
+  Offset        <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"offset"`</span>
+  Dir           <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"dir"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/events"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"dir\": \"forward\",\r\n    \"fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"length\": 1000,\r\n    \"offset\": 0\r\n}"</span>)
+  search := Events{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+    Length:        <span class="hljs-number">100</span>,
+    Offset:        <span class="hljs-number">0</span>,
+    Dir:           <span class="hljs-string">"forward"</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/events'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/events'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+        <span class="hljs-string">'dir'</span> =&gt; <span class="hljs-string">'forward'</span>,
+        <span class="hljs-string">'length'</span> =&gt; <span class="hljs-number">1000</span>,
+        <span class="hljs-string">'offset'</span> =&gt; <span class="hljs-number">0</span>
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id": "qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
-    "dir": "forward",
-    "fields": ["Event Time", "Device", "Logger", "Raw Message", "deviceVendor", "deviceProduct", "deviceVersion", "deviceEventClassId", "name"],
-    "length": 1000,
-    "offset": 0
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
-<pre class="highlight tab tab-json"><code>[
-  {
-      <span class="hljs-attr">"fields"</span>: [
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"_rowId"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"_rowId"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Event Time"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Event Time"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Logger"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Logger"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Device"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Device"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Receipt Time"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Receipt Time"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceReceiptTime"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceReceiptTime"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString2"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString2"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationAddress"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationAddress"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber3Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber3Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceVersion"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceVersion"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"name"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"name"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceAddress"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceAddress"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceVendor"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceVendor"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Version"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Version"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber1Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber1Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceEventCategory"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceEventCategory"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"endTime"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"endTime"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileName"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileName"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber2"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber2"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber1"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber1"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"baseEventCount"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"baseEventCount"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"startTime"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"startTime"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber3"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber3"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"agentSeverity"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"agentSeverity"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fsize"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fsize"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceProduct"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceProduct"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceEventClassId"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceEventClassId"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber2Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber2Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString2Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString2Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileType"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileType"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString6"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString6"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString6Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString6Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString1"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString1"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString3"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString3"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString1Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString1Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString3Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString3Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationUserId"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationUserId"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationUserName"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationUserName"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"sourceAddress"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"sourceAddress"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"message"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"message"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString4"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString4"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString4Label"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString4Label"</span>
-          },
-          {
-              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileId"</span>,
-              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
-              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileId"</span>
-          }
-      ],
-      <span class="hljs-attr">"results"</span>: [
-          [
-              <span class="hljs-string">"CC-0@Local"</span>,
-              <span class="hljs-number">1541447890136</span>,
-              <span class="hljs-string">"Local"</span>,
-              <span class="hljs-string">"Logger"</span>,
-              <span class="hljs-number">1541448490709</span>,
-              <span class="hljs-number">1541447890135</span>,
-              <span class="hljs-string">"CurrentValue"</span>,
-              <span class="hljs-string">"127.0.0.1"</span>,
-              <span class="hljs-string">"used (MB)"</span>,
-              <span class="hljs-string">"6.6.0.8204.0"</span>,
-              <span class="hljs-string">"Storage Group Space Used"</span>,
-              <span class="hljs-string">"127.0.0.1"</span>,
-              <span class="hljs-string">"ArcSight"</span>,
-              <span class="hljs-string">"0"</span>,
-              <span class="hljs-string">"Percent Used"</span>,
-              <span class="hljs-string">"/Monitor/StorageGroup/Space/Used"</span>,
-              <span class="hljs-number">1541447890135</span>,
-              <span class="hljs-string">"Default Storage Group"</span>,
-              <span class="hljs-number">180</span>,
-              <span class="hljs-number">2</span>,
-              <span class="hljs-number">1</span>,
-              <span class="hljs-number">1541447890135</span>,
-              <span class="hljs-number">1024</span>,
-              <span class="hljs-string">"1"</span>,
-              <span class="hljs-string">"45"</span>,
-              <span class="hljs-string">"Logger"</span>,
-              <span class="hljs-string">"storagegroup:100"</span>,
-              <span class="hljs-string">"retention period (days)"</span>,
-              <span class="hljs-string">"timeframe"</span>,
-              <span class="hljs-string">"storageGroup"</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>
-          ],
-          [
-              <span class="hljs-string">"CC-1@Local"</span>,
-              <span class="hljs-number">1541447890136</span>,
-              <span class="hljs-string">"Local"</span>,
-              <span class="hljs-string">"Logger"</span>,
-              <span class="hljs-number">1541448490709</span>,
-              <span class="hljs-number">1541447890136</span>,
-              <span class="hljs-string">"CurrentValue"</span>,
-              <span class="hljs-string">"127.0.0.1"</span>,
-              <span class="hljs-string">"used (MB)"</span>,
-              <span class="hljs-string">"6.6.0.8204.0"</span>,
-              <span class="hljs-string">"Storage Group Space Used"</span>,
-              <span class="hljs-string">"127.0.0.1"</span>,
-              <span class="hljs-string">"ArcSight"</span>,
-              <span class="hljs-string">"0"</span>,
-              <span class="hljs-string">"Percent Used"</span>,
-              <span class="hljs-string">"/Monitor/StorageGroup/Space/Used"</span>,
-              <span class="hljs-number">1541447890136</span>,
-              <span class="hljs-string">"Internal Event Storage Group"</span>,
-              <span class="hljs-number">365</span>,
-              <span class="hljs-number">33</span>,
-              <span class="hljs-number">1</span>,
-              <span class="hljs-number">1541447890136</span>,
-              <span class="hljs-number">1024</span>,
-              <span class="hljs-string">"1"</span>,
-              <span class="hljs-string">"3"</span>,
-              <span class="hljs-string">"Logger"</span>,
-              <span class="hljs-string">"storagegroup:100"</span>,
-              <span class="hljs-string">"retention period (days)"</span>,
-              <span class="hljs-string">"timeframe"</span>,
-              <span class="hljs-string">"storageGroup"</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>,
-              <span class="hljs-string">""</span>
-          ],
-      ]
-  }
-]
+<pre class="highlight tab tab-json"><code>{
+    <span class="hljs-attr">"fields"</span>: [
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"_rowId"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"_rowId"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Event Time"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Event Time"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Logger"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Logger"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Device"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Device"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Receipt Time"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Receipt Time"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceReceiptTime"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceReceiptTime"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString2"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString2"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationAddress"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationAddress"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber3Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber3Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceVersion"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceVersion"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"name"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"name"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceAddress"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceAddress"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceVendor"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceVendor"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Version"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Version"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber1Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber1Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceEventCategory"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceEventCategory"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"endTime"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"endTime"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileName"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileName"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber2"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber2"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber1"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber1"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"baseEventCount"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"baseEventCount"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"startTime"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"startTime"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber3"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber3"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"agentSeverity"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"agentSeverity"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fsize"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fsize"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceProduct"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceProduct"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceEventClassId"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceEventClassId"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber2Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber2Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString2Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString2Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileType"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileType"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString6"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString6"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString6Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString6Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString1"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString1"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString3"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString3"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString1Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString1Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString3Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString3Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationUserId"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationUserId"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationUserName"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationUserName"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"sourceAddress"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"sourceAddress"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"message"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"message"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString4"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString4"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString4Label"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString4Label"</span>
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileId"</span>,
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileId"</span>
+        }
+    ],
+    <span class="hljs-attr">"results"</span>: [
+        [
+            <span class="hljs-string">"CC-0@Local"</span>,
+            <span class="hljs-number">1541447890136</span>,
+            <span class="hljs-string">"Local"</span>,
+            <span class="hljs-string">"Logger"</span>,
+            <span class="hljs-number">1541448490709</span>,
+            <span class="hljs-number">1541447890135</span>,
+            <span class="hljs-string">"CurrentValue"</span>,
+            <span class="hljs-string">"127.0.0.1"</span>,
+            <span class="hljs-string">"used (MB)"</span>,
+            <span class="hljs-string">"6.6.0.8204.0"</span>,
+            <span class="hljs-string">"Storage Group Space Used"</span>,
+            <span class="hljs-string">"127.0.0.1"</span>,
+            <span class="hljs-string">"ArcSight"</span>,
+            <span class="hljs-string">"0"</span>,
+            <span class="hljs-string">"Percent Used"</span>,
+            <span class="hljs-string">"/Monitor/StorageGroup/Space/Used"</span>,
+            <span class="hljs-number">1541447890135</span>,
+            <span class="hljs-string">"Default Storage Group"</span>,
+            <span class="hljs-number">180</span>,
+            <span class="hljs-number">2</span>,
+            <span class="hljs-number">1</span>,
+            <span class="hljs-number">1541447890135</span>,
+            <span class="hljs-number">1024</span>,
+            <span class="hljs-string">"1"</span>,
+            <span class="hljs-string">"45"</span>,
+            <span class="hljs-string">"Logger"</span>,
+            <span class="hljs-string">"storagegroup:100"</span>,
+            <span class="hljs-string">"retention period (days)"</span>,
+            <span class="hljs-string">"timeframe"</span>,
+            <span class="hljs-string">"storageGroup"</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>
+        ],
+        [
+            <span class="hljs-string">"CC-1@Local"</span>,
+            <span class="hljs-number">1541447890136</span>,
+            <span class="hljs-string">"Local"</span>,
+            <span class="hljs-string">"Logger"</span>,
+            <span class="hljs-number">1541448490709</span>,
+            <span class="hljs-number">1541447890136</span>,
+            <span class="hljs-string">"CurrentValue"</span>,
+            <span class="hljs-string">"127.0.0.1"</span>,
+            <span class="hljs-string">"used (MB)"</span>,
+            <span class="hljs-string">"6.6.0.8204.0"</span>,
+            <span class="hljs-string">"Storage Group Space Used"</span>,
+            <span class="hljs-string">"127.0.0.1"</span>,
+            <span class="hljs-string">"ArcSight"</span>,
+            <span class="hljs-string">"0"</span>,
+            <span class="hljs-string">"Percent Used"</span>,
+            <span class="hljs-string">"/Monitor/StorageGroup/Space/Used"</span>,
+            <span class="hljs-number">1541447890136</span>,
+            <span class="hljs-string">"Internal Event Storage Group"</span>,
+            <span class="hljs-number">365</span>,
+            <span class="hljs-number">33</span>,
+            <span class="hljs-number">1</span>,
+            <span class="hljs-number">1541447890136</span>,
+            <span class="hljs-number">1024</span>,
+            <span class="hljs-string">"1"</span>,
+            <span class="hljs-string">"3"</span>,
+            <span class="hljs-string">"Logger"</span>,
+            <span class="hljs-string">"storagegroup:100"</span>,
+            <span class="hljs-string">"retention period (days)"</span>,
+            <span class="hljs-string">"timeframe"</span>,
+            <span class="hljs-string">"storageGroup"</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>,
+            <span class="hljs-string">""</span>
+        ],
+    ]
+}
 </code></pre>
-<p>After a successfull <a href="#search">search</a> has been finalized you can now retrieve the data. There is several ways to retrieve it described in this document, all depending on how you want the returned data format to be.</p>
+<p>After a successfull <a href="#search">search</a> has been finalized you can now retrieve it's results.</p>
 <p>The event API call returns all events associated with the specified search id. If the hit count of the completed search is larger than 1000 then only the first 1000 events will be shown.
 This can be circumvented by setting the <code>length</code> parameter to a higher number, though the maximum is 10000 events on newer versions of the Logger (6.x i believe), and 1000 on older versions.</p>
 <h3 id="http-request">HTTP Request</h3>
@@ -1309,7 +1484,7 @@ This can be circumvented by setting the <code>length</code> parameter to a highe
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -1325,33 +1500,33 @@ This can be circumvented by setting the <code>length</code> parameter to a highe
 <td>dir</td>
 <td>String</td>
 <td>forward</td>
-<td>In which order you want to sort the returned results, can be forward or backwards.</td>
+<td>In which order you want to sort the returned results, can be forward or backward.</td>
 <td>No</td>
 </tr>
 <tr>
 <td>fields</td>
 <td>String</td>
-<td>Null</td>
+<td>null</td>
 <td>Defines which fields are to be returned for each event, defaults to all fields.</td>
 <td>No</td>
 </tr>
 <tr>
 <td>length</td>
-<td>Number</td>
+<td>Integer</td>
 <td>1000</td>
 <td>The maximum amount of events returned.</td>
 <td>No</td>
 </tr>
 <tr>
 <td>offset</td>
-<td>Number</td>
-<td>Null</td>
+<td>Integer</td>
+<td>null</td>
 <td>Which event count to start at, for example if more than maximum length is needed</td>
 <td>No</td>
 </tr>
 </tbody>
 </table>
-<aside class="warning">If you want to retrieve all events from a search that has a higher hit count than the maximum 10000, you will need to run several concurrent event API calls, each setting the value in the `offset` parameter higher, as this describes from which returned eventcount to start from.</aside>
+<aside class="information">If you want to retrieve all events from a search that has a higher hit count than the maximum 10000, you will need to run several concurrent event API calls, each setting the value in the `offset` parameter higher, as this describes from which returned eventcount to start from.</aside>
 <h2 id="histogram">histogram</h2>
 <pre class="highlight tab tab-shell"><code>curl -X POST \
   https://HOSTNAME:9000/server/search/histogram \
@@ -1364,174 +1539,205 @@ This can be circumvented by setting the <code>length</code> parameter to a highe
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/histogram"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/histogram'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
 
-response = http.request(request)
+data = {
+  <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+}
+
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/histogram"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/histogram'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
+
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Histogram <span class="hljs-keyword">struct</span> {
+  SessionID     <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"user_session_id"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/histogram"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>)
+  search := Histogram{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/histogram'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/histogram'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
-<pre class="highlight tab tab-json"><code>[
-  {
-      <span class="hljs-attr">"bucket_count"</span>: <span class="hljs-number">74</span>,
-      <span class="hljs-attr">"bucket_width"</span>: <span class="hljs-number">60000</span>,
-      <span class="hljs-attr">"start_bucket_time"</span>: <span class="hljs-number">1541447890000</span>,
-      <span class="hljs-attr">"hits"</span>: [
-          <span class="hljs-number">4</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">23</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">18</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">18</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">20</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">17</span>,
-          <span class="hljs-number">0</span>,
-          <span class="hljs-number">1</span>,
-          <span class="hljs-number">0</span>,
-          <span class="hljs-number">3</span>
-      ]
-  }
-]
+<pre class="highlight tab tab-json"><code>{
+    <span class="hljs-attr">"bucket_count"</span>: <span class="hljs-number">74</span>,
+    <span class="hljs-attr">"bucket_width"</span>: <span class="hljs-number">60000</span>,
+    <span class="hljs-attr">"start_bucket_time"</span>: <span class="hljs-number">1541447890000</span>,
+    <span class="hljs-attr">"hits"</span>: [
+        <span class="hljs-number">4</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">23</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">18</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">18</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">20</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">17</span>,
+        <span class="hljs-number">0</span>,
+        <span class="hljs-number">1</span>,
+        <span class="hljs-number">0</span>,
+        <span class="hljs-number">3</span>
+    ]
+}
 </code></pre>
 <p>Returns your events in an histogram format which is useful in cases you only want to retrieve data to be used in charts for example.
-The <code>bucket_count</code> is the amount of buckets collected, <code>bucket_width</code> is the time in milliseconds per bucket, <code>start_bucket_time</code> is the UNIXTIME or Epoch time value from when the starting timeframe and last <code>hits</code> are the amount of hits per <code>bucket_width</code> timeframe.</p>
+The <code>bucket_count</code> is the amount of buckets collected, <code>bucket_width</code> is the time in milliseconds per bucket,
+<code>start_bucket_time</code> is the UNIXTIME or Epoch time value from when the starting timeframe and last <code>hits</code> are the amount of hits per <code>bucket_width</code> timeframe.</p>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/server/search/histogram</code></p>
 <h3 id="url-parameters">URL Parameters</h3>
@@ -1548,7 +1754,7 @@ The <code>bucket_count</code> is the amount of buckets collected, <code>bucket_w
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -1575,85 +1781,121 @@ The <code>bucket_count</code> is the amount of buckets collected, <code>bucket_w
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/raw_events"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/raw_events'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"row_ids\": [\"CC-0@Local\", \"CC-1@Local\"]\r\n}"</span>
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
 
-response = http.request(request)
+data = {
+  <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+  <span class="hljs-string">'row_ids'</span> =&gt; [<span class="hljs-string">"CC-0@Local"</span>, <span class="hljs-string">"CC-1@Local"</span>]
+}
+
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/raw_events"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/raw_events'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"row_ids\": [\"CC-0@Local\", \"CC-1@Local\"]\r\n}"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>,
+  <span class="hljs-string">'row_ids'</span>: [<span class="hljs-string">"CC-0@Local"</span>, <span class="hljs-string">"CC-1@Local"</span>]
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
+
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> RawEvents <span class="hljs-keyword">struct</span> {
+  SessionID     <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"user_session_id"`</span>
+  RowIDs        <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"row_ids"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/raw_events"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"row_ids\": [\"CC-0@Local\", \"CC-1@Local\"]\r\n}"</span>)
+  search := RawEvents{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+    RowIDs: <span class="hljs-string">"[\"CC-0@Local\", \"CC-1@Local\"]"</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/raw_events'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/raw_events'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+        <span class="hljs-string">'row_ids'</span> =&gt; [<span class="hljs-string">"CC-0@Local"</span>, <span class="hljs-string">"CC-1@Local"</span>]
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
-    "row_ids": ["CC-0@Local", "CC-1@Local"]
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP 200 OK and all raw events in an array:</p>
@@ -1680,7 +1922,7 @@ $request-&gt;setBody(<span class="hljs-string">'{
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -1694,9 +1936,9 @@ $request-&gt;setBody(<span class="hljs-string">'{
 </tr>
 <tr>
 <td>row_ids</td>
-<td>Array of Strings</td>
+<td>String</td>
 <td>null</td>
-<td>The specific row_ids wanted from a finalized search</td>
+<td>An array of Strings with the specific row_ids wanted from a finalized search</td>
 <td>Yes</td>
 </tr>
 </tbody>
@@ -1713,98 +1955,128 @@ $request-&gt;setBody(<span class="hljs-string">'{
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/status"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/status'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
 
-response = http.request(request)
+data = {
+  <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
+}
+
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/status"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/status'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
-headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'7Kg2eRWvQGI3TBofLrFHMyHRv5FqIIqexHEMzzzcslo.'</span>
 }
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+headers = {
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
+
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Status <span class="hljs-keyword">struct</span> {
+  SessionID     <span class="hljs-keyword">int</span>    <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID <span class="hljs-keyword">string</span> <span class="hljs-string">`json:"user_session_id"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/status"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>)
+  search := Status{
+    SessionID:     <span class="hljs-number">100003</span>,
+    UserSessionID: <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/status'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/status'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">'search_session_id'</span>  =&gt; <span class="hljs-number">10003</span>,
+        <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
-<pre class="highlight tab tab-json"><code>[
-  {
-      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"complete"</span>,
-      <span class="hljs-attr">"result_type"</span>: <span class="hljs-string">"histogram"</span>,
-      <span class="hljs-attr">"hit"</span>: <span class="hljs-number">1726</span>,
-      <span class="hljs-attr">"scanned"</span>: <span class="hljs-number">1726</span>,
-      <span class="hljs-attr">"elapsed"</span>: <span class="hljs-string">"00:00:00.276"</span>,
-      <span class="hljs-attr">"message"</span>: []
-  }
-]
+<pre class="highlight tab tab-json"><code>{
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"complete"</span>,
+    <span class="hljs-attr">"result_type"</span>: <span class="hljs-string">"histogram"</span>,
+    <span class="hljs-attr">"hit"</span>: <span class="hljs-number">1726</span>,
+    <span class="hljs-attr">"scanned"</span>: <span class="hljs-number">1726</span>,
+    <span class="hljs-attr">"elapsed"</span>: <span class="hljs-string">"00:00:00.276"</span>,
+    <span class="hljs-attr">"message"</span>: []
+}
 </code></pre>
 <p>The status API endpoint is used to monitor the current status of any existing <a href="#search">search</a>.</p>
 <h3 id="http-request">HTTP Request</h3>
@@ -1823,7 +2095,7 @@ $request-&gt;setBody(<span class="hljs-string">'{
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -1859,113 +2131,178 @@ $request-&gt;setBody(<span class="hljs-string">'{
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"discover_fields\": false,\r\n    \"end_time\": \"2018-10-26T11:00:00.000Z\",\r\n    \"summary_fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"field_summary\": false, \r\n    \"local_search\": true,\r\n    \"query\":\"\",\r\n    \"search_type\":\"interactive\",\r\n    \"start_time\":\"2018-10-26T09:00:00.000Z\",\r\n    \"timeout\": 120000\r\n}"</span>
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
 
-response = http.request(request)
+data = {
+  <span class="hljs-string">'search_session_id'</span> =&gt; <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span> =&gt; <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+  <span class="hljs-string">'discover_fields'</span> =&gt; <span class="hljs-literal">false</span>,
+  <span class="hljs-string">'end_time'</span> =&gt; <span class="hljs-string">'2018-10-26T11:00:00.000Z'</span>,
+  <span class="hljs-string">'summary_fields'</span> =&gt; [<span class="hljs-string">"Event Time"</span>, <span class="hljs-string">"Device"</span>, <span class="hljs-string">"Logger"</span>, <span class="hljs-string">"Raw Message"</span>, <span class="hljs-string">"deviceVendor"</span>, <span class="hljs-string">"deviceProduct"</span>, <span class="hljs-string">"deviceVersion"</span>, <span class="hljs-string">"deviceEventClassId"</span>, <span class="hljs-string">"name"</span>],
+  <span class="hljs-string">'field_summary'</span> =&gt; <span class="hljs-literal">false</span>, 
+  <span class="hljs-string">'local_search'</span> =&gt; <span class="hljs-literal">true</span>,
+  <span class="hljs-string">'query'</span> =&gt; <span class="hljs-string">''</span>,
+  <span class="hljs-string">'search_type'</span> =&gt; <span class="hljs-string">'interactive'</span>,
+  <span class="hljs-string">'start_time'</span> =&gt; <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>,
+  <span class="hljs-string">'timeout'</span> =&gt; <span class="hljs-number">120000</span>
+}
+
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"discover_fields\": false,\r\n    \"end_time\": \"2018-10-26T11:00:00.000Z\",\r\n    \"summary_fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"field_summary\": false, \r\n    \"local_search\": true,\r\n    \"query\":\"\",\r\n    \"search_type\":\"interactive\",\r\n    \"start_time\":\"2018-10-26T09:00:00.000Z\",\r\n    \"timeout\": 120000\r\n}"</span>
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>,
+  <span class="hljs-string">'discover_fields'</span>: <span class="hljs-keyword">False</span>,
+  <span class="hljs-string">'end_time'</span>: <span class="hljs-string">'2018-10-26T11:00:00.000Z'</span>,
+  <span class="hljs-string">'summary_fields'</span>: [<span class="hljs-string">"Event Time"</span>, <span class="hljs-string">"Device"</span>, <span class="hljs-string">"Logger"</span>, <span class="hljs-string">"Raw Message"</span>, <span class="hljs-string">"deviceVendor"</span>, <span class="hljs-string">"deviceProduct"</span>, <span class="hljs-string">"deviceVersion"</span>, <span class="hljs-string">"deviceEventClassId"</span>, <span class="hljs-string">"name"</span>],
+  <span class="hljs-string">'field_summary'</span>: <span class="hljs-keyword">False</span>, 
+  <span class="hljs-string">'local_search'</span>: <span class="hljs-keyword">True</span>,
+  <span class="hljs-string">'query'</span>: <span class="hljs-string">''</span>,
+  <span class="hljs-string">'search_type'</span>: <span class="hljs-string">'interactive'</span>,
+  <span class="hljs-string">'start_time'</span>: <span class="hljs-string">'2018-10-26T09:00:00.000Z'</span>,
+  <span class="hljs-string">'timeout'</span>: <span class="hljs-number">120000</span>
+}
+
 headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
-    }
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Search <span class="hljs-keyword">struct</span> {
+  SessionID       <span class="hljs-keyword">int</span>     <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID   <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"user_session_id"`</span>
+  DiscoverFields  <span class="hljs-keyword">bool</span>    <span class="hljs-string">`json:"discover_fields"`</span>
+  EndTime         <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"end_time"`</span>
+  StartTime       <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"start_time"`</span>
+  FieldSummary    <span class="hljs-keyword">bool</span>    <span class="hljs-string">`json:"field_summary"`</span>
+  SummaryFields   <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"summary_fields"`</span>
+  LocalSearch     <span class="hljs-keyword">bool</span>    <span class="hljs-string">`json:"local_search"`</span>
+  Query           <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"query"`</span>
+  SearchType      <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"search_type"`</span>
+  Timeout         <span class="hljs-keyword">int</span>     <span class="hljs-string">`json:"timeout"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\": \"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\",\r\n    \"discover_fields\": false,\r\n    \"end_time\": \"2018-10-26T11:00:00.000Z\",\r\n    \"summary_fields\": [\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"],\r\n    \"field_summary\": false, \r\n    \"local_search\": true,\r\n    \"query\":\"\",\r\n    \"search_type\":\"interactive\",\r\n    \"start_time\":\"2018-10-26T09:00:00.000Z\",\r\n    \"timeout\": 120000\r\n}"</span>)
+  search := Search{
+    SessionID:      <span class="hljs-number">100003</span>,
+    UserSessionID:  <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+    EndTime:        <span class="hljs-string">"2018-10-26T09:00:00.000Z"</span>,
+    StartTime:      <span class="hljs-string">"2018-10-26T09:00:00.000Z"</span>,
+    FieldSummary:   <span class="hljs-literal">false</span>,
+    SummaryFields:  <span class="hljs-string">"[\"Event Time\", \"Device\", \"Logger\", \"Raw Message\", \"deviceVendor\", \"deviceProduct\", \"deviceVersion\", \"deviceEventClassId\", \"name\"]"</span>,
+    LocalSearch:    <span class="hljs-literal">true</span>,
+    Query:          <span class="hljs-string">""</span>,
+    SearchType:     <span class="hljs-string">"interactive"</span>,
+    Timeout:        <span class="hljs-number">120000</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">"search_session_id"</span>: <span class="hljs-number">100003</span>,
+        <span class="hljs-string">"user_session_id"</span>: <span class="hljs-string">"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+        <span class="hljs-string">"discover_fields"</span>: <span class="hljs-keyword">false</span>,
+        <span class="hljs-string">"end_time"</span>: <span class="hljs-string">"2018-10-26T11:00:00.000Z"</span>,
+        <span class="hljs-string">"summary_fields"</span>: [<span class="hljs-string">"Event Time"</span>, <span class="hljs-string">"Device"</span>, <span class="hljs-string">"Logger"</span>, <span class="hljs-string">"Raw Message"</span>, <span class="hljs-string">"deviceVendor"</span>, <span class="hljs-string">"deviceProduct"</span>, <span class="hljs-string">"deviceVersion"</span>, <span class="hljs-string">"deviceEventClassId"</span>, <span class="hljs-string">"name"</span>],
+        <span class="hljs-string">"field_summary"</span>: <span class="hljs-keyword">false</span>, 
+        <span class="hljs-string">"local_search"</span>: <span class="hljs-keyword">true</span>,
+        <span class="hljs-string">"query"</span>:<span class="hljs-string">""</span>,
+        <span class="hljs-string">"search_type"</span>:<span class="hljs-string">"interactive"</span>,
+        <span class="hljs-string">"start_time"</span>:<span class="hljs-string">"2018-10-26T09:00:00.000Z"</span>,
+        <span class="hljs-string">"timeout"</span>: <span class="hljs-number">120000</span>
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id": "qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
-    "discover_fields": false,
-    "end_time": "2018-10-26T11:00:00.000Z",
-    "summary_fields": ["Event Time", "Device", "Logger", "Raw Message", "deviceVendor", "deviceProduct", "deviceVersion", "deviceEventClassId", "name"],
-    "field_summary": false, 
-    "local_search": true,
-    "query":"",
-    "search_type":"interactive",
-    "start_time":"2018-10-26T09:00:00.000Z",
-    "timeout": 120000
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
-<pre class="highlight tab tab-json"><code>[
-  {
-      <span class="hljs-attr">"sessionId"</span>: <span class="hljs-string">"18"</span>
-  }
-]
+<pre class="highlight tab tab-json"><code>{
+    <span class="hljs-attr">"sessionId"</span>: <span class="hljs-string">"18"</span>
+}
 </code></pre>
-<p>The search API endpoint is utilized when you want to retrieve any sort of data or information. When a search is executed a <a href="#status">status</a> API call can be used to check if it is ongoing, have completed or failed.</p>
-<p>When creating a search the minimum amount of information you need to provide is an <code>user_session_id</code> and a <code>search_session_id</code>.</p>
+<p>The search API endpoint is utilized when you want to retrieve any sort of data or information from the Logger. When a search is executed a <a href="#status">status</a> API call can be used to check if it is ongoing, have completed or failed.</p>
+<p>When creating a search the minimum amount of information you need to provide is a
+<code>user_session_id</code> and a <code>search_session_id</code>.</p>
 <p>If no other information is provided it will run the search with it's default values.</p>
-<p>It is important to know that the <code>search_session_id</code> is a integer value set by the user and not the application. While there exists certain situations where two searches can be run with the same ID it is not recommended, for example you can run a new search with the same ID if the first one has finalized.</p>
+<p>It is important to know that the <code>search_session_id</code> is a integer value set by the user and not the Logger. While there exists certain situations where two searches can be run with the same ID it is not recommended, for example you can run a new search with the same ID if the first one has finalized.</p>
 <p>It is recommended to set the <code>search_session_id</code> to an ever increasing numerical value, like UNIXTIME/Epoch time to ensure there is never any situations which can cause an duplicated entry.</p>
 <p>If you are experiencing that a search is missing once complete then it is important to note that the default timeout value is quite low. This is the timeout for when the search, when finished, removes itself and the results and not for how long it can run.</p>
 <p>The returned <code>SessionID</code> in the response when successfully initiating a search is the reference ID internally on the Logger, this is not reused anywhere in your API calls.
-It only allows you to login to the Logger web interface, click on Configuration in the top menu and choose Running Searches to display the currently active searches, with a SessionID to differentiate them.</p>
-<aside class="warning">A search is linked to your current authToken, meaning that if the user session ever times out, the search and it's results is lost.</aside>
-<aside class="warning">Examples currently do not escape special characters in the query parameter, added on todo</aside>
+It only allows you to login to the Logger web interface, click on Configuration in the top menu and choose Running Searches to display the currently active searches, with a <code>SessionID</code> to differentiate between them.</p>
+<aside class="warning">A search is linked to your current <code>user_session_id</code>, meaning that if the user session ever times out, the search and it's results is lost.</aside>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/server/search</code></p>
 <h3 id="url-parameters">URL Parameters</h3>
@@ -1982,7 +2319,7 @@ It only allows you to login to the Logger web interface, click on Configuration 
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -2017,9 +2354,9 @@ It only allows you to login to the Logger web interface, click on Configuration 
 </tr>
 <tr>
 <td>summary_fields</td>
-<td>Array of Strings</td>
-<td>Values in example</td>
-<td>List of displaynames of fields if creating a summary</td>
+<td>String</td>
+<td>Default set of fields</td>
+<td>Array of strings with the displaynames of fields if creating a summary</td>
 <td>If field_summary is true</td>
 </tr>
 <tr>
@@ -2039,7 +2376,7 @@ It only allows you to login to the Logger web interface, click on Configuration 
 <tr>
 <td>query</td>
 <td>String</td>
-<td>null(*)</td>
+<td>null</td>
 <td>A single string representing your whole query, as being run on the Logger Web interface</td>
 <td>No</td>
 </tr>
@@ -2052,7 +2389,7 @@ It only allows you to login to the Logger web interface, click on Configuration 
 </tr>
 <tr>
 <td>timeout</td>
-<td>Number</td>
+<td>Integer</td>
 <td>120000</td>
 <td>How many milliseconds the search and it's results is stored after completed</td>
 <td>No</td>
@@ -2071,84 +2408,116 @@ It only allows you to login to the Logger web interface, click on Configuration 
 </code></pre>
 <pre class="highlight tab tab-ruby"><code><span class="hljs-keyword">require</span> <span class="hljs-string">'uri'</span>
 <span class="hljs-keyword">require</span> <span class="hljs-string">'net/http'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'openssl'</span>
+<span class="hljs-keyword">require</span> <span class="hljs-string">'json'</span>
 
-url = URI(<span class="hljs-string">"https://HOSTNAME:9000/server/search/stop"</span>)
+url = URI.parse(<span class="hljs-string">'https://HOSTNAME:9000/server/search/stop'</span>)
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = <span class="hljs-literal">true</span>
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-request = Net::HTTP::Post.new(url)
-request[<span class="hljs-string">"Accept"</span>] = <span class="hljs-string">'application/json'</span>
-request[<span class="hljs-string">"Content-Type"</span>] = <span class="hljs-string">'application/json'</span>
-request.body = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
+json_headers = {
+  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
+}
 
-response = http.request(request)
+data = {
+  <span class="hljs-string">"search_session_id"</span> =&gt; <span class="hljs-number">100003</span>,
+  <span class="hljs-string">"user_session_id"</span> =&gt; <span class="hljs-string">"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>
+}
+
+response = http.post(url.path, data.to_json, json_headers)
 puts response.read_body
 </code></pre>
 <pre class="highlight tab tab-python"><code><span class="hljs-keyword">import</span> requests
 
-url = <span class="hljs-string">"https://HOSTNAME:9000/server/search/stop"</span>
+url = <span class="hljs-string">'https://HOSTNAME:9000/server/search/stop'</span>
 
-payload = <span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>
+payload = {
+  <span class="hljs-string">'search_session_id'</span>: <span class="hljs-number">100003</span>,
+  <span class="hljs-string">'user_session_id'</span>: <span class="hljs-string">'qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.'</span>
+}
+
 headers = {
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">"application/json"</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">"application/json"</span>,
-    }
+  <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
+  <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
+}
 
-response = requests.request(<span class="hljs-string">"POST"</span>, url, data=payload, headers=headers)
+response = requests.request(<span class="hljs-string">'POST'</span>, url, json=payload, headers=headers, verify=<span class="hljs-keyword">True</span>)
 
 print(response.text)
 </code></pre>
 <pre class="highlight tab tab-go"><code><span class="hljs-keyword">package</span> main
 
 <span class="hljs-keyword">import</span> (
+  <span class="hljs-string">"bytes"</span>
+  <span class="hljs-string">"encoding/json"</span>
   <span class="hljs-string">"fmt"</span>
-  <span class="hljs-string">"strings"</span>
-  <span class="hljs-string">"net/http"</span>
   <span class="hljs-string">"io/ioutil"</span>
+  <span class="hljs-string">"log"</span>
+  <span class="hljs-string">"net/http"</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">type</span> Stop <span class="hljs-keyword">struct</span> {
+  SessionID       <span class="hljs-keyword">int</span>     <span class="hljs-string">`json:"search_session_id"`</span>
+  UserSessionID   <span class="hljs-keyword">string</span>  <span class="hljs-string">`json:"user_session_id"`</span>
+}
 
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
   url := <span class="hljs-string">"https://HOSTNAME:9000/server/search/stop"</span>
 
-  payload := strings.NewReader(<span class="hljs-string">"{\r\n    \"search_session_id\": 100003,\r\n    \"user_session_id\":\"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.\"\r\n}"</span>)
+  search := Stop{
+    SessionID:      <span class="hljs-number">100003</span>,
+    UserSessionID:  <span class="hljs-string">"FkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>,
+  }
+  buf := <span class="hljs-built_in">new</span>(bytes.Buffer)
+  <span class="hljs-keyword">if</span> err := json.NewEncoder(buf).Encode(search); err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to encode JSON body: %v"</span>, err)
+  }
 
-  req, _ := http.NewRequest(<span class="hljs-string">"POST"</span>, url, payload)
+  req, err := http.NewRequest(<span class="hljs-string">"POST"</span>, url, buf)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to create request: %v"</span>, err)
+  }
 
   req.Header.Add(<span class="hljs-string">"Accept"</span>, <span class="hljs-string">"application/json"</span>)
   req.Header.Add(<span class="hljs-string">"Content-Type"</span>, <span class="hljs-string">"application/json"</span>)
 
-  res, _ := http.DefaultClient.Do(req)
+  resp, err := http.DefaultClient.Do(req)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to contact server: %v"</span>, err)
+  }
+  <span class="hljs-keyword">defer</span> resp.Body.Close()
 
-  <span class="hljs-keyword">defer</span> res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
+  body, err := ioutil.ReadAll(resp.Body)
+  <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    log.Fatalf(<span class="hljs-string">"failed to read response body: %v"</span>, err)
+  }
 
-  fmt.Println(res)
+  fmt.Println(resp)
   fmt.Println(<span class="hljs-keyword">string</span>(body))
 
 }
 </code></pre>
-<pre class="highlight tab tab-php"><code>$request = <span class="hljs-keyword">new</span> HttpRequest();
-$request-&gt;setUrl(<span class="hljs-string">'https://HOSTNAME:9000/server/search/stop'</span>);
-$request-&gt;setMethod(HTTP_METH_POST);
+<pre class="highlight tab tab-php"><code><span class="hljs-keyword">use</span> <span class="hljs-title">GuzzleHttp</span>\<span class="hljs-title">Client</span>;
 
-$request-&gt;setHeaders(<span class="hljs-keyword">array</span>(
-  <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>,
-  <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>
-));
+$client = <span class="hljs-keyword">new</span> Client([
+    <span class="hljs-string">'base_uri'</span> =&gt; <span class="hljs-string">'https://HOSTNAME:9000/server/search/stop'</span>
+    <span class="hljs-string">'verify'</span> =&gt; <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">'headers'</span>   =&gt; [
+        <span class="hljs-string">'Accept'</span> =&gt; <span class="hljs-string">'application/json'</span>,
+        <span class="hljs-string">'Content-Type'</span> =&gt; <span class="hljs-string">'application/json'</span>
+    ],
+    <span class="hljs-string">'json'</span> =&gt; [
+        <span class="hljs-string">"search_session_id"</span>: <span class="hljs-number">100003</span>,
+        <span class="hljs-string">"user_session_id"</span>: <span class="hljs-string">"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."</span>
+    ]
+]);
 
-$request-&gt;setBody(<span class="hljs-string">'{
-    "search_session_id": 100003,
-    "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg."
-}'</span>);
-
-<span class="hljs-keyword">try</span> {
-  $response = $request-&gt;send();
-
-  <span class="hljs-keyword">echo</span> $response-&gt;getBody();
-} <span class="hljs-keyword">catch</span> (HttpException $ex) {
-  <span class="hljs-keyword">echo</span> $ex;
-}
+$response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
+ 
+<span class="hljs-keyword">return</span> json_decode($response-&gt;getBody()-&gt;getContents(), <span class="hljs-keyword">true</span>);
 </code></pre>
 <blockquote>
 <p>The above request returns an empty HTTP 200 OK response upon success</p>
@@ -2170,7 +2539,7 @@ $request-&gt;setBody(<span class="hljs-string">'{
 <tbody>
 <tr>
 <td>search_session_id</td>
-<td>Number</td>
+<td>Integer</td>
 <td>null</td>
 <td>The choosen search session used when creating the search</td>
 <td>Yes</td>
@@ -2184,6 +2553,49 @@ $request-&gt;setBody(<span class="hljs-string">'{
 </tr>
 </tbody>
 </table>
+<h1 id="http-status-codes">HTTP Status Codes</h1>
+<p>The ArcSight Logger uses the following status codes:</p>
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Request was completed successfully.</td>
+</tr>
+<tr>
+<td>204</td>
+<td>Request was completed successfully, though no content was returned.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Your request format is incorrect or missing parameters.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>User does not have access or the sessionID is not correct.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>The ID of the search you are trying to retrieve was not found</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server error, for more information see the returned stacktrace</td>
+</tr>
+</tbody>
+</table>
+<h1 id="legal">Legal</h1>
+<p>All mentions of Microfocus, ArcSight and Logger is trademarked to Microfocus, this documentation is a collected source of educational material, any usage of products mentioned in this documentation requires a commercial license with MicroFocus or any of it's partners.</p>
+<p>The documentation or associated open source software is not in any way part of the official documentation provided by Micro Focus and therefore not included for support. It does not represent or try to imitate any products or services offered by Microfocus.</p>
+<p>The documentation is provided &quot;as-is&quot; and can be changed or updated at any time, keeping it up to date for all versions is done by &quot;best-effort&quot;.</p>
+<p>While i do my best to keep this as updated as possible, there might be cases in which i am unable to do so, but anyone is allowed to fork, change or contribute to this project in any way they see fit.</p>
+<p>This documentation uses <a href="https://github.com/Mermade/shins">Shin</a>, which is a fork of <a href="https://github.com/lord/slate">Slate</a></p>
+<p>Any other legal parts is covered in the LICENSE file and it's associated links.</p>
 
       </div>
       <div class="dark-box">
