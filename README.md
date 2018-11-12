@@ -14,7 +14,7 @@ Download the required package directly from github, either from cli using:
 ```sh
 $ git clone https://github.com/arcsight-unofficial/arcsight-logger-api-documentation
 ```
-Or if you do not have internet access or proxy connection which does not allow git, download the newest release manually.
+Or if you have internet access or a proxy server which does not allow git, download the newest release manually.
 [Releases can be found here](https://github.com/arcsight-unofficial/arcsight-logger-api-documentation/releases)
 
 ### Accessing the static build of the documentation
