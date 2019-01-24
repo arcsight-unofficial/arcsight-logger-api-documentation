@@ -621,6 +621,276 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 <blockquote>
 <p>The above request returns HTTP 200 OK and a JSON response structured like this:</p>
 </blockquote>
+<pre class="highlight tab tab-json"><code>{
+          <span class="hljs-attr">"fields"</span>: [
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"_rowId"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"_rowId"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Event Time"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Event Time"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Logger"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Logger"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Device"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Device"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Receipt Time"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Receipt Time"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Time"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Time"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceReceiptTime"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceReceiptTime"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString2"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString2"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"destinationAddress"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"destinationAddress"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber1"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber1"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"baseEventCount"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"baseEventCount"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"startTime"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"startTime"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceVersion"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceVersion"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"agentSeverity"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"agentSeverity"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"name"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"name"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceAddress"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceAddress"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceVendor"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceVendor"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Version"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"Version"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber1Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber1Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceEventCategory"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceEventCategory"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceProduct"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceProduct"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceEventClassId"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceEventClassId"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"endTime"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"date"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"endTime"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString2Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString2Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString1"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString1"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString3"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString3"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString6"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString6"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString1Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString1Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString6Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString6Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomString3Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomString3Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber2"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber2"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber2Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber2Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber3Label"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber3Label"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileName"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileName"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"deviceCustomNumber3"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"number"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"deviceCustomNumber3"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fsize"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fsize"</span>
+                    },
+                    {
+                              <span class="hljs-attr">"name"</span>: <span class="hljs-string">"fileType"</span>,
+                              <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+                              <span class="hljs-attr">"alias"</span>: <span class="hljs-string">"fileType"</span>
+                    }
+          ],
+          <span class="hljs-attr">"results"</span>: [
+                    [
+                              <span class="hljs-string">"CF76-46@Local"</span>,
+                              <span class="hljs-number">1548290520011</span>,
+                              <span class="hljs-string">"Local"</span>,
+                              <span class="hljs-string">"Logger"</span>,
+                              <span class="hljs-number">1548290863015</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-number">1548290520011</span>,
+                              <span class="hljs-string">"CurrentValue"</span>,
+                              <span class="hljs-string">"127.0.0.1"</span>,
+                              <span class="hljs-number">1</span>,
+                              <span class="hljs-number">1</span>,
+                              <span class="hljs-number">1548290520011</span>,
+                              <span class="hljs-string">"6.6.0.8204.0"</span>,
+                              <span class="hljs-string">"1"</span>,
+                              <span class="hljs-string">"CPU Usage"</span>,
+                              <span class="hljs-string">"127.0.0.1"</span>,
+                              <span class="hljs-string">"ArcSight"</span>,
+                              <span class="hljs-string">"0"</span>,
+                              <span class="hljs-string">"Percent Usage"</span>,
+                              <span class="hljs-string">"/Monitor/CPU/Usage"</span>,
+                              <span class="hljs-string">"Logger"</span>,
+                              <span class="hljs-string">"cpu:100"</span>,
+                              <span class="hljs-number">1548290520011</span>,
+                              <span class="hljs-string">"timeframe"</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-literal">null</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-literal">null</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>
+                    ],
+                    [
+                              <span class="hljs-string">"CF76-47@Local"</span>,
+                              <span class="hljs-number">1548290520012</span>,
+                              <span class="hljs-string">"Local"</span>,
+                              <span class="hljs-string">"Logger"</span>,
+                              <span class="hljs-number">1548290863015</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-number">1548290520012</span>,
+                              <span class="hljs-string">"SinceLastMonitorEvent"</span>,
+                              <span class="hljs-string">"127.0.0.1"</span>,
+                              <span class="hljs-number">0</span>,
+                              <span class="hljs-number">1</span>,
+                              <span class="hljs-number">1548290520012</span>,
+                              <span class="hljs-string">"6.6.0.8204.0"</span>,
+                              <span class="hljs-string">"1"</span>,
+                              <span class="hljs-string">"Number of Searches Performed"</span>,
+                              <span class="hljs-string">"127.0.0.1"</span>,
+                              <span class="hljs-string">"ArcSight"</span>,
+                              <span class="hljs-string">"0"</span>,
+                              <span class="hljs-string">"Number of Searches"</span>,
+                              <span class="hljs-string">"/Monitor/Search/Performed"</span>,
+                              <span class="hljs-string">"Logger"</span>,
+                              <span class="hljs-string">"search:100"</span>,
+                              <span class="hljs-number">1548290520012</span>,
+                              <span class="hljs-string">"timeframe"</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-literal">null</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-literal">null</span>,
+                              <span class="hljs-string">""</span>,
+                              <span class="hljs-string">""</span>
+                    ],
+          ]
+}
+</code></pre>
 <p>Returns results from your aggregated <a href="#search">search</a> formatted to be used in charts or statistics.</p>
 <h3 id="http-request">HTTP Request</h3>
 <p><code>POST https://HOSTNAME:9000/server/search/chart_data</code></p>
@@ -1936,7 +2206,7 @@ $response = $client-&gt;request(<span class="hljs-string">'POST'</span>);
 </tr>
 <tr>
 <td>row_ids</td>
-<td>String</td>
+<td>Array</td>
 <td>null</td>
 <td>An array of Strings with the specific row_ids wanted from a finalized search</td>
 <td>Yes</td>

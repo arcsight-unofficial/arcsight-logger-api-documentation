@@ -454,6 +454,277 @@ return json_decode($response->getBody()->getContents(), true);
 ```
 
 > The above request returns HTTP 200 OK and a JSON response structured like this:
+```json
+{
+          "fields": [
+                    {
+                              "name": "_rowId",
+                              "type": "string",
+                              "alias": "_rowId"
+                    },
+                    {
+                              "name": "Event Time",
+                              "type": "date",
+                              "alias": "Event Time"
+                    },
+                    {
+                              "name": "Logger",
+                              "type": "string",
+                              "alias": "Logger"
+                    },
+                    {
+                              "name": "Device",
+                              "type": "string",
+                              "alias": "Device"
+                    },
+                    {
+                              "name": "Receipt Time",
+                              "type": "date",
+                              "alias": "Receipt Time"
+                    },
+                    {
+                              "name": "Time",
+                              "type": "string",
+                              "alias": "Time"
+                    },
+                    {
+                              "name": "deviceReceiptTime",
+                              "type": "date",
+                              "alias": "deviceReceiptTime"
+                    },
+                    {
+                              "name": "deviceCustomString2",
+                              "type": "string",
+                              "alias": "deviceCustomString2"
+                    },
+                    {
+                              "name": "destinationAddress",
+                              "type": "string",
+                              "alias": "destinationAddress"
+                    },
+                    {
+                              "name": "deviceCustomNumber1",
+                              "type": "number",
+                              "alias": "deviceCustomNumber1"
+                    },
+                    {
+                              "name": "baseEventCount",
+                              "type": "number",
+                              "alias": "baseEventCount"
+                    },
+                    {
+                              "name": "startTime",
+                              "type": "date",
+                              "alias": "startTime"
+                    },
+                    {
+                              "name": "deviceVersion",
+                              "type": "string",
+                              "alias": "deviceVersion"
+                    },
+                    {
+                              "name": "agentSeverity",
+                              "type": "string",
+                              "alias": "agentSeverity"
+                    },
+                    {
+                              "name": "name",
+                              "type": "string",
+                              "alias": "name"
+                    },
+                    {
+                              "name": "deviceAddress",
+                              "type": "string",
+                              "alias": "deviceAddress"
+                    },
+                    {
+                              "name": "deviceVendor",
+                              "type": "string",
+                              "alias": "deviceVendor"
+                    },
+                    {
+                              "name": "Version",
+                              "type": "string",
+                              "alias": "Version"
+                    },
+                    {
+                              "name": "deviceCustomNumber1Label",
+                              "type": "string",
+                              "alias": "deviceCustomNumber1Label"
+                    },
+                    {
+                              "name": "deviceEventCategory",
+                              "type": "string",
+                              "alias": "deviceEventCategory"
+                    },
+                    {
+                              "name": "deviceProduct",
+                              "type": "string",
+                              "alias": "deviceProduct"
+                    },
+                    {
+                              "name": "deviceEventClassId",
+                              "type": "string",
+                              "alias": "deviceEventClassId"
+                    },
+                    {
+                              "name": "endTime",
+                              "type": "date",
+                              "alias": "endTime"
+                    },
+                    {
+                              "name": "deviceCustomString2Label",
+                              "type": "string",
+                              "alias": "deviceCustomString2Label"
+                    },
+                    {
+                              "name": "deviceCustomString1",
+                              "type": "string",
+                              "alias": "deviceCustomString1"
+                    },
+                    {
+                              "name": "deviceCustomString3",
+                              "type": "string",
+                              "alias": "deviceCustomString3"
+                    },
+                    {
+                              "name": "deviceCustomString6",
+                              "type": "string",
+                              "alias": "deviceCustomString6"
+                    },
+                    {
+                              "name": "deviceCustomString1Label",
+                              "type": "string",
+                              "alias": "deviceCustomString1Label"
+                    },
+                    {
+                              "name": "deviceCustomString6Label",
+                              "type": "string",
+                              "alias": "deviceCustomString6Label"
+                    },
+                    {
+                              "name": "deviceCustomString3Label",
+                              "type": "string",
+                              "alias": "deviceCustomString3Label"
+                    },
+                    {
+                              "name": "deviceCustomNumber2",
+                              "type": "number",
+                              "alias": "deviceCustomNumber2"
+                    },
+                    {
+                              "name": "deviceCustomNumber2Label",
+                              "type": "string",
+                              "alias": "deviceCustomNumber2Label"
+                    },
+                    {
+                              "name": "deviceCustomNumber3Label",
+                              "type": "string",
+                              "alias": "deviceCustomNumber3Label"
+                    },
+                    {
+                              "name": "fileName",
+                              "type": "string",
+                              "alias": "fileName"
+                    },
+                    {
+                              "name": "deviceCustomNumber3",
+                              "type": "number",
+                              "alias": "deviceCustomNumber3"
+                    },
+                    {
+                              "name": "fsize",
+                              "type": "string",
+                              "alias": "fsize"
+                    },
+                    {
+                              "name": "fileType",
+                              "type": "string",
+                              "alias": "fileType"
+                    }
+          ],
+          "results": [
+                    [
+                              "CF76-46@Local",
+                              1548290520011,
+                              "Local",
+                              "Logger",
+                              1548290863015,
+                              "",
+                              1548290520011,
+                              "CurrentValue",
+                              "127.0.0.1",
+                              1,
+                              1,
+                              1548290520011,
+                              "6.6.0.8204.0",
+                              "1",
+                              "CPU Usage",
+                              "127.0.0.1",
+                              "ArcSight",
+                              "0",
+                              "Percent Usage",
+                              "/Monitor/CPU/Usage",
+                              "Logger",
+                              "cpu:100",
+                              1548290520011,
+                              "timeframe",
+                              "",
+                              "",
+                              "",
+                              "",
+                              "",
+                              "",
+                              null,
+                              "",
+                              "",
+                              "",
+                              null,
+                              "",
+                              ""
+                    ],
+                    [
+                              "CF76-47@Local",
+                              1548290520012,
+                              "Local",
+                              "Logger",
+                              1548290863015,
+                              "",
+                              1548290520012,
+                              "SinceLastMonitorEvent",
+                              "127.0.0.1",
+                              0,
+                              1,
+                              1548290520012,
+                              "6.6.0.8204.0",
+                              "1",
+                              "Number of Searches Performed",
+                              "127.0.0.1",
+                              "ArcSight",
+                              "0",
+                              "Number of Searches",
+                              "/Monitor/Search/Performed",
+                              "Logger",
+                              "search:100",
+                              1548290520012,
+                              "timeframe",
+                              "",
+                              "",
+                              "",
+                              "",
+                              "",
+                              "",
+                              null,
+                              "",
+                              "",
+                              "",
+                              null,
+                              "",
+                              ""
+                    ],
+          ]
+}
+```
 
 Returns results from your aggregated [search](#search) formatted to be used in charts or statistics.
 
@@ -629,8 +900,8 @@ curl -X POST \
   -d '{
     "search_session_id": 100003,
     "user_session_id":"qFkEjr11ClMzLL0hitX1tbi1Oc-hl9emRVPULOYP5hg.",
-    "end_time":"2018-10-26T09:00:00.000Z",
-    "start_time":"2018-10-26T09:00:00.000Z"
+    "end_time":"",
+    "start_time":""
 }'
 ```
 
@@ -1667,7 +1938,7 @@ Parameter | Type | Default | Description | Required |
 --------- | ---- | ------- | ----------- | -------- |
 search_session_id | Integer | null | The choosen search session used when creating the search | Yes
 user_session_id | String | null | Auth Token returned by the login API endpoint | Yes
-row_ids | String | null | An array of Strings with the specific row_ids wanted from a finalized search | Yes
+row_ids | Array | null | An array of Strings with the specific row_ids wanted from a finalized search | Yes
 
 ## status
 ```shell
